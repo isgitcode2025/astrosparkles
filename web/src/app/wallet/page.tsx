@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useLang } from "@/components/i18n";
 import { RequireAuth } from "@/components/auth/AuthProvider";
 import { Btn } from "@/components/ui/Button";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -66,6 +67,7 @@ function loadRazorpayScript(): Promise<boolean> {
 }
 
 function Wallet() {
+  const lang = useLang();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [txns, setTxns] = useState<Txn[]>([]);
@@ -111,7 +113,10 @@ function Wallet() {
     });
     setMessage({
       kind: "ok",
-      text: `₹${res.credited}${res.bonus ? ` + ₹${res.bonus} bonus` : ""} added to your wallet.`,
+      text:
+        lang === "hi"
+          ? `₹${res.credited}${res.bonus ? ` + ₹${res.bonus} बोनस` : ""} आपके वॉलेट में जोड़े गए।`
+          : `₹${res.credited}${res.bonus ? ` + ₹${res.bonus} bonus` : ""} added to your wallet.`,
     });
     window.dispatchEvent(new Event("kj-wallet"));
     await refresh();
@@ -134,13 +139,13 @@ function Wallet() {
         return;
       }
 
-      if (!(await loadRazorpayScript()) || !window.Razorpay) throw new Error("Could not load payment window");
+      if (!(await loadRazorpayScript()) || !window.Razorpay) throw new Error(lang === "hi" ? "भुगतान विंडो लोड नहीं हो सकी" : "Could not load payment window");
       const rzp = new window.Razorpay({
         key: order.razorpayKeyId,
         order_id: order.orderId,
         amount: order.amountPaise,
         currency: order.currency,
-        name: "Wallet recharge",
+        name: lang === "hi" ? "वॉलेट रिचार्ज" : "Wallet recharge",
         description: `₹${order.breakdown.amount} + GST`,
         theme: {
           color: getComputedStyle(document.documentElement).getPropertyValue("--brand-primary").trim() || "#3B1F6E",
@@ -149,7 +154,7 @@ function Wallet() {
           verify(r.razorpay_order_id, r.razorpay_payment_id, r.razorpay_signature).catch((e) =>
             setMessage({
               kind: "err",
-              text: e instanceof ApiRequestError ? e.message : "Payment could not be verified",
+              text: e instanceof ApiRequestError ? e.message : lang === "hi" ? "भुगतान सत्यापित नहीं हो सका" : "Payment could not be verified",
             }),
           ),
         modal: {
@@ -167,7 +172,7 @@ function Wallet() {
     } catch (e) {
       setMessage({
         kind: "err",
-        text: e instanceof ApiRequestError || e instanceof Error ? e.message : "Recharge failed",
+        text: e instanceof ApiRequestError || e instanceof Error ? e.message : lang === "hi" ? "रिचार्ज विफल रहा" : "Recharge failed",
       });
     } finally {
       setBusy(false);
@@ -177,32 +182,39 @@ function Wallet() {
   if (loadError)
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
-        <ErrorState title="Could not load your wallet" onRetry={load} />
+        <ErrorState title={lang === "hi" ? "आपका वॉलेट लोड नहीं हो सका" : "Could not load your wallet"} onRetry={load} />
       </div>
     );
   if (!settings || balance === null) return <WalletSkeleton />;
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-      <PageHeader title="My wallet" subtitle="Recharge once and pay per minute for chats, or for poojas and courses." />
-      <AccountTabs />
+      <PageHeader
+        title={lang === "hi" ? "मेरा वॉलेट" : "My wallet"}
+        subtitle={lang === "hi" ? "एक बार रिचार्ज करें और चैट के लिए प्रति मिनट, या पूजा और कोर्स के लिए भुगतान करें।" : "Recharge once and pay per minute for chats, or for poojas and courses."}
+      />
+      <AccountTabs lang={lang} />
       <div className="grid items-start gap-6 lg:grid-cols-3">
         <section className="space-y-6 lg:col-span-2">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-indigo to-brand-midnight p-6 text-white shadow-celestial">
             <div className="bg-mandala pointer-events-none absolute inset-0 opacity-[0.07]" />
             <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-saffron/25 blur-2xl" />
-            <p className="relative text-xs font-bold uppercase tracking-[0.2em] text-brand-gold">Available balance</p>
+            <p className="relative text-xs font-bold uppercase tracking-[0.2em] text-brand-gold">{lang === "hi" ? "उपलब्ध बैलेंस" : "Available balance"}</p>
             <p className="relative mt-1 font-heading text-4xl font-extrabold">₹{balance?.toFixed(2) ?? "—"}</p>
-            <p className="relative mt-1 text-sm text-white/70">Used for per-minute chats, scheduled sessions, gifts, poojas and courses.</p>
+            <p className="relative mt-1 text-sm text-white/70">
+              {lang === "hi" ? "प्रति मिनट चैट, शेड्यूल्ड सेशन, गिफ्ट, पूजा और कोर्स के लिए उपयोग होता है।" : "Used for per-minute chats, scheduled sessions, gifts, poojas and courses."}
+            </p>
           </div>
           <div className="card">
             {settings?.mockMode && (
               <p className="mb-4 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-800 ring-1 ring-amber-200">
-                Test mode: Razorpay keys are not set, so recharges are simulated and no money is charged.
+                {lang === "hi"
+                  ? "टेस्ट मोड: Razorpay कुंजियाँ सेट नहीं हैं, इसलिए रिचार्ज सिम्युलेट किए जाते हैं और कोई पैसा नहीं लिया जाता।"
+                  : "Test mode: Razorpay keys are not set, so recharges are simulated and no money is charged."}
               </p>
             )}
 
-            <h2 className="font-heading text-lg font-bold text-brand-primary">Add money</h2>
+            <h2 className="font-heading text-lg font-bold text-brand-primary">{lang === "hi" ? "पैसे जोड़ें" : "Add money"}</h2>
             <div className="mt-3 grid grid-cols-3 gap-3 sm:grid-cols-6">
               {settings?.packs.map((p) => (
                 <button
@@ -216,12 +228,12 @@ function Wallet() {
                   }`}
                 >
                   <span className="block font-heading font-bold text-brand-indigo">₹{p.amount}</span>
-                  {p.bonusPercent > 0 && <span className="block text-xs font-medium text-emerald-700">+{p.bonusPercent}% extra</span>}
+                  {p.bonusPercent > 0 && <span className="block text-xs font-medium text-emerald-700">{lang === "hi" ? `+${p.bonusPercent}% अतिरिक्त` : `+${p.bonusPercent}% extra`}</span>}
                 </button>
               ))}
             </div>
             <label className="label mt-4">
-              Or enter amount
+              {lang === "hi" ? "या राशि दर्ज करें" : "Or enter amount"}
               <input
                 type="number"
                 min={settings?.minRecharge}
@@ -236,36 +248,36 @@ function Wallet() {
             {amount ? (
               <dl className="mt-5 space-y-1 rounded-xl bg-brand-cream/60 p-4 text-sm">
                 <div className="flex justify-between">
-                  <dt>Recharge amount</dt>
+                  <dt>{lang === "hi" ? "रिचार्ज राशि" : "Recharge amount"}</dt>
                   <dd>₹{amount.toFixed(2)}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt>GST ({settings?.gstPercent}%)</dt>
+                  <dt>{lang === "hi" ? `जीएसटी (${settings?.gstPercent}%)` : `GST (${settings?.gstPercent}%)`}</dt>
                   <dd>₹{gst.toFixed(2)}</dd>
                 </div>
                 <div className="flex justify-between border-t border-brand-border pt-1 font-semibold">
-                  <dt>You pay</dt>
+                  <dt>{lang === "hi" ? "आप भुगतान करेंगे" : "You pay"}</dt>
                   <dd>₹{(amount + gst).toFixed(2)}</dd>
                 </div>
                 {pack && pack.bonus > 0 && (
                   <div className="flex justify-between text-emerald-700">
-                    <dt>Bonus credited</dt>
+                    <dt>{lang === "hi" ? "बोनस जमा" : "Bonus credited"}</dt>
                     <dd>₹{pack.bonus}</dd>
                   </div>
                 )}
               </dl>
             ) : null}
 
-            <Btn onClick={recharge} busy={busy} busyText="Opening payment…" disabled={!amount} icon="fa-lock" className="btn-primary mt-5 w-full sm:w-auto">
-              {`Proceed to pay${amount ? ` ₹${(amount + gst).toFixed(2)}` : ""}`}
+            <Btn onClick={recharge} busy={busy} busyText={lang === "hi" ? "भुगतान खोला जा रहा है…" : "Opening payment…"} disabled={!amount} icon="fa-lock" className="btn-primary mt-5 w-full sm:w-auto">
+              {lang === "hi" ? `भुगतान करें${amount ? ` ₹${(amount + gst).toFixed(2)}` : ""}` : `Proceed to pay${amount ? ` ₹${(amount + gst).toFixed(2)}` : ""}`}
             </Btn>
           </div>
         </section>
 
         <section className="card">
-          <h2 className="font-heading font-bold text-brand-primary">Recent transactions</h2>
+          <h2 className="font-heading font-bold text-brand-primary">{lang === "hi" ? "हाल के लेनदेन" : "Recent transactions"}</h2>
           {txns.length === 0 ? (
-            <p className="mt-3 text-sm text-slate-500">No transactions yet.</p>
+            <p className="mt-3 text-sm text-slate-500">{lang === "hi" ? "अभी तक कोई लेनदेन नहीं।" : "No transactions yet."}</p>
           ) : (
             <ul className="mt-3 divide-y divide-brand-border text-sm">
               {txns.map((t) => (

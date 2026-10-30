@@ -8,6 +8,7 @@ import { ProfileActions } from "@/components/astrologer/ProfileActions";
 import { ReviewsPanel } from "@/components/astrologer/ReviewsPanel";
 import { Avatar } from "@/components/AstrologerCardView";
 import { api, ApiRequestError, type AstrologerProfile, type AstrologerReviews, type Master } from "@/lib/api";
+import { serverLang } from "@/lib/server-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -30,15 +31,68 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 const BADGE: Record<string, string> = { "top-rated": "Top Rated", celebrity: "Celebrity", new: "New Astrologer", verified: "Verified" };
+const BADGE_HI: Record<string, string> = { "top-rated": "टॉप रेटेड", celebrity: "सेलिब्रिटी", new: "नया ज्योतिषी", verified: "सत्यापित" };
 const PRESENCE = {
   online: ["ONLINE", "bg-emerald-500"],
   busy: ["BUSY", "bg-amber-500"],
   offline: ["OFFLINE", "bg-stone-400"],
 } as const;
+const PRESENCE_HI = {
+  online: ["ऑनलाइन", "bg-emerald-500"],
+  busy: ["व्यस्त", "bg-amber-500"],
+  offline: ["ऑफ़लाइन", "bg-stone-400"],
+} as const;
 const BAR = ["bg-emerald-600", "bg-emerald-500", "bg-amber-400", "bg-orange-400", "bg-rose-500"];
+
+const text = {
+  en: {
+    home: "Home",
+    astrologer: "Astrologer",
+    verified: "Verified",
+    about: (name: string) => `About ${name}`,
+    expertise: "Areas of Expertise",
+    qualifications: "Qualifications",
+    reviewsOne: "rating",
+    reviewsMany: "ratings",
+    noRatings: "No ratings yet",
+    ratings: "Ratings",
+    basedOn: (n: number) => `Based on ${n} verified user${n === 1 ? "" : "s"}`,
+    ratingsCount: "ratings",
+    perks: [
+      ["fa-stopwatch", "bg-amber-50 text-amber-600", "Pay only for the minutes you talk"],
+      ["fa-check", "bg-emerald-50 text-emerald-600", "Verified expert astrologers"],
+      ["fa-lock", "bg-indigo-50 text-brand-dark", "Secure payments, private chats"],
+    ],
+    yearsExp: "Years Exp",
+    id: "ID",
+  },
+  hi: {
+    home: "होम",
+    astrologer: "ज्योतिषी",
+    verified: "सत्यापित",
+    about: (name: string) => `${name} के बारे में`,
+    expertise: "विशेषज्ञता के क्षेत्र",
+    qualifications: "योग्यताएं",
+    reviewsOne: "रेटिंग",
+    reviewsMany: "रेटिंग्स",
+    noRatings: "अभी तक कोई रेटिंग नहीं",
+    ratings: "रेटिंग्स",
+    basedOn: (n: number) => `${n} सत्यापित उपयोगकर्ता${n === 1 ? "" : "ओं"} के आधार पर`,
+    ratingsCount: "रेटिंग्स",
+    perks: [
+      ["fa-stopwatch", "bg-amber-50 text-amber-600", "केवल बात किए गए मिनटों का भुगतान करें"],
+      ["fa-check", "bg-emerald-50 text-emerald-600", "सत्यापित विशेषज्ञ ज्योतिषी"],
+      ["fa-lock", "bg-indigo-50 text-brand-dark", "सुरक्षित भुगतान, निजी चैट"],
+    ],
+    yearsExp: "वर्ष अनुभव",
+    id: "आईडी",
+  },
+};
 
 /** Astrologer detail page from the Stitch "Detail page" design. */
 export default async function AstrologerPage({ params }: { params: { slug: string } }) {
+  const lang = serverLang();
+  const l = text[lang];
   const a = await load(params.slug);
   const [master, reviews] = await Promise.all([
     api<Master>("/config/master", { revalidate: 3600 }).catch(() => null),
@@ -50,17 +104,17 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
   const langs = a.languages.map((l) => label(master?.languages, l));
   const summary = reviews?.summary ?? { average: a.rating.average, count: a.rating.count, breakdown: {}, consultationsLast7Days: 0 };
   const badge = a.badges.find((b) => BADGE[b] && b !== "new");
-  const [presenceLabel, presenceTone] = PRESENCE[a.presence];
+  const [presenceLabel, presenceTone] = (lang === "hi" ? PRESENCE_HI : PRESENCE)[a.presence];
 
   return (
     <div className="bg-[#FAF7F2]">
       <nav className="mx-auto flex w-full max-w-7xl items-center space-x-2 px-4 pb-2 pt-4 text-xs text-stone-500 sm:px-6 lg:px-8" aria-label="Breadcrumb">
         <Link href="/" className="hover:text-brand-saffron">
-          Home
+          {l.home}
         </Link>
         <span>›</span>
         <Link href="/astrologers" className="hover:text-brand-saffron">
-          Astrologer
+          {l.astrologer}
         </Link>
         {a.expertise[0] && (
           <>
@@ -103,12 +157,12 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
                     {a.verified && (
                       <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-600">
                         <i className="fa-solid fa-certificate text-amber-500" aria-hidden />
-                        Verified
+                        {l.verified}
                       </span>
                     )}
                     {badge && (
                       <span className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2.5 py-0.5 text-xs font-semibold text-brand-indigo">
-                        {BADGE[badge]}
+                        {(lang === "hi" ? BADGE_HI : BADGE)[badge]}
                       </span>
                     )}
                   </div>
@@ -120,16 +174,16 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
                     <span className="text-stone-300">•</span>
                     <span className="inline-flex items-center gap-1">
                       <i className="fa-regular fa-clock text-stone-400" aria-hidden />
-                      {a.experienceYears}+ Years Exp
+                      {a.experienceYears}+ {l.yearsExp}
                     </span>
                     <span className="text-stone-300">•</span>
                     <span className="inline-flex items-center gap-1 font-bold text-brand-dark">
                       {summary.count > 0 ? (
                         <>
-                          <span className="text-amber-500">★</span> {summary.average.toFixed(1)} ({summary.count} rating{summary.count === 1 ? "" : "s"})
+                          <span className="text-amber-500">★</span> {summary.average.toFixed(1)} ({summary.count} {summary.count === 1 ? l.reviewsOne : l.reviewsMany})
                         </>
                       ) : (
-                        <span className="font-semibold text-stone-500">No ratings yet</span>
+                        <span className="font-semibold text-stone-500">{l.noRatings}</span>
                       )}
                     </span>
                   </p>
@@ -140,10 +194,10 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
                       </span>
                     ))}
                   </div>
-                  {a.code && <p className="mt-2 text-[11px] text-stone-400">ID {a.code}</p>}
+                  {a.code && <p className="mt-2 text-[11px] text-stone-400">{l.id} {a.code}</p>}
                 </div>
 
-                <ProfileActions astrologerId={a.id} slug={a.slug} name={a.displayName} followers={a.followerCount} />
+                <ProfileActions astrologerId={a.id} slug={a.slug} name={a.displayName} followers={a.followerCount} lang={lang} />
               </div>
             </section>
 
@@ -157,19 +211,20 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
                 weekCount={summary.consultationsLast7Days}
                 totalCount={a.consultationCount}
                 name={a.displayName}
+                lang={lang}
               />
             </div>
 
             <section className="space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
               <h2 className="flex items-center gap-2 font-heading text-lg font-bold text-brand-dark">
-                <span>About {a.displayName}</span>
+                <span>{l.about(a.displayName)}</span>
                 <span className="h-2 w-2 rounded-full bg-brand-saffron" />
               </h2>
-              <AboutBox text={a.bioEn} textHi={a.bioHi || undefined} />
+              <AboutBox text={a.bioEn} textHi={a.bioHi || undefined} lang={lang} />
             </section>
 
             <section className="space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-              <h2 className="font-heading text-lg font-bold text-brand-dark">Areas of Expertise</h2>
+              <h2 className="font-heading text-lg font-bold text-brand-dark">{l.expertise}</h2>
               <div className="flex flex-wrap gap-2.5">
                 {[...skills, ...concerns].map((t) => (
                   <span key={t} className="rounded-lg bg-stone-100 px-4 py-2 text-xs font-semibold text-stone-800">
@@ -179,7 +234,7 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
               </div>
               {a.qualifications.length > 0 && (
                 <div className="pt-2">
-                  <h3 className="mb-2 text-sm font-bold text-brand-dark">Qualifications</h3>
+                  <h3 className="mb-2 text-sm font-bold text-brand-dark">{l.qualifications}</h3>
                   <ul className="space-y-1 text-sm text-stone-600">
                     {a.qualifications.map((q) => (
                       <li key={q} className="flex items-start gap-2">
@@ -192,9 +247,9 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
               )}
             </section>
 
-            <ReviewsPanel astrologerId={a.id} name={a.displayName} avatarUrl={a.avatarUrl} initial={reviews} />
+            <ReviewsPanel astrologerId={a.id} name={a.displayName} avatarUrl={a.avatarUrl} initial={reviews} lang={lang} />
 
-            <GiftPanel astrologerId={a.id} slug={a.slug} name={a.displayName} gifts={master?.gifts ?? []} />
+            <GiftPanel astrologerId={a.id} slug={a.slug} name={a.displayName} gifts={master?.gifts ?? []} lang={lang} />
           </div>
 
           {/* ---------- right column ---------- */}
@@ -208,20 +263,21 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
                 weekCount={summary.consultationsLast7Days}
                 totalCount={a.consultationCount}
                 name={a.displayName}
+                lang={lang}
               />
             </div>
 
             <div className="space-y-4 rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
               <div className="flex items-baseline justify-between">
-                <h3 className="font-heading text-base font-bold text-brand-dark">Ratings</h3>
-                <span className="text-xs text-stone-500">{summary.count > 0 ? `Based on ${summary.count} verified user${summary.count === 1 ? "" : "s"}` : "No ratings yet"}</span>
+                <h3 className="font-heading text-base font-bold text-brand-dark">{l.ratings}</h3>
+                <span className="text-xs text-stone-500">{summary.count > 0 ? l.basedOn(summary.count) : l.noRatings}</span>
               </div>
               <div className="flex items-center gap-6">
                 <div className="text-center">
                   <div className="font-heading text-4xl font-black text-brand-dark">
                     {summary.count > 0 ? summary.average.toFixed(1) : "–"} <span className="text-3xl text-amber-500">★</span>
                   </div>
-                  <div className="text-xs font-medium text-stone-500">{summary.count} ratings</div>
+                  <div className="text-xs font-medium text-stone-500">{summary.count} {l.ratingsCount}</div>
                 </div>
                 <div className="flex-grow space-y-1.5 text-xs font-semibold text-stone-600">
                   {[5, 4, 3, 2, 1].map((s, i) => {
@@ -241,16 +297,12 @@ export default async function AstrologerPage({ params }: { params: { slug: strin
             </div>
 
             <div className="space-y-3.5 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-              {[
-                ["fa-stopwatch", "bg-amber-50 text-amber-600", "Pay only for the minutes you talk"],
-                ["fa-check", "bg-emerald-50 text-emerald-600", "Verified expert astrologers"],
-                ["fa-lock", "bg-indigo-50 text-brand-dark", "Secure payments, private chats"],
-              ].map(([icon, tone, text]) => (
-                <div key={text} className="flex items-center gap-3 text-xs font-semibold text-stone-700">
+              {l.perks.map(([icon, tone, perk]) => (
+                <div key={perk} className="flex items-center gap-3 text-xs font-semibold text-stone-700">
                   <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${tone}`}>
                     <i className={`fa-solid ${icon}`} aria-hidden />
                   </div>
-                  <span>{text}</span>
+                  <span>{perk}</span>
                 </div>
               ))}
             </div>

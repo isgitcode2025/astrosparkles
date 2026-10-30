@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { Lang } from "@/lib/i18n";
 
 /** Standard page heading used across inner pages (Stitch theme: indigo title, slate subtitle). */
 export function PageHeader({ eyebrow, title, subtitle, children }: { eyebrow?: string; title: string; subtitle?: ReactNode; children?: ReactNode }) {
@@ -45,10 +46,29 @@ const STATUS_STYLES: Record<string, string> = {
   expired: "bg-stone-100 text-stone-600 ring-stone-200",
 };
 
-export function StatusPill({ status, label }: { status: string; label?: string }) {
+export const STATUS_LABELS_HI: Record<string, string> = {
+  active: "सक्रिय",
+  started: "शुरू",
+  confirmed: "पुष्टि",
+  requested: "अनुरोधित",
+  pending: "लंबित",
+  completed: "पूर्ण",
+  paid: "भुगतान हो गया",
+  approved: "स्वीकृत",
+  cancelled: "रद्द",
+  rejected: "अस्वीकृत",
+  refunded: "वापस किया गया",
+  failed: "असफल",
+  suspended: "निलंबित",
+  missed: "छूट गया",
+  expired: "समाप्त",
+};
+
+export function StatusPill({ status, label, lang = "en" }: { status: string; label?: string; lang?: Lang }) {
+  const text = label ?? (lang === "hi" ? STATUS_LABELS_HI[status] ?? status : status);
   return (
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide ring-1 ${STATUS_STYLES[status] ?? "bg-slate-100 text-slate-700 ring-slate-200"}`}>
-      {label ?? status}
+      {text}
     </span>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { PlaceSearch, type Place } from "./PlaceSearch";
+import { useLang } from "@/components/i18n";
 
 export type BirthValue = {
   name: string;
@@ -43,17 +44,26 @@ export function BirthForm({
   title?: string;
   fixedGender?: boolean;
 }) {
+  const lang = useLang();
+  const hi = lang === "hi";
   const set = (patch: Partial<BirthValue>) => onChange({ ...value, ...patch });
+  const genderLabel = (g: string) => (hi ? (g === "male" ? "पुरुष" : "महिला") : g);
   return (
     <fieldset className="space-y-4">
       {title && <legend className="mb-2 font-heading text-lg font-bold text-brand-primary">{title}</legend>}
       <label className="label">
-        Name
-        <input value={value.name} onChange={(e) => set({ name: e.target.value })} maxLength={80} className={input} placeholder="Full name" />
+        {hi ? "नाम" : "Name"}
+        <input
+          value={value.name}
+          onChange={(e) => set({ name: e.target.value })}
+          maxLength={80}
+          className={input}
+          placeholder={hi ? "पूरा नाम" : "Full name"}
+        />
       </label>
       {!fixedGender && (
-        <div className="label" role="radiogroup" aria-label="Gender">
-          Gender
+        <div className="label" role="radiogroup" aria-label={hi ? "लिंग" : "Gender"}>
+          {hi ? "लिंग" : "Gender"}
           <div className="mt-1.5 flex gap-2">
             {["male", "female"].map((g) => (
               <button
@@ -65,7 +75,7 @@ export function BirthForm({
                 className={`pill capitalize ${value.gender === g ? "pill-on" : "pill-off"}`}
               >
                 <i className={`fa-solid ${g === "male" ? "fa-mars" : "fa-venus"} mr-1.5 text-xs`} aria-hidden />
-                {g}
+                {genderLabel(g)}
               </button>
             ))}
           </div>
@@ -73,7 +83,7 @@ export function BirthForm({
       )}
       <div className="grid grid-cols-2 gap-3">
         <label className="label">
-          Date of birth
+          {hi ? "जन्म तिथि" : "Date of birth"}
           <input
             type="date"
             required
@@ -85,7 +95,7 @@ export function BirthForm({
           />
         </label>
         <label className="label">
-          Time of birth
+          {hi ? "जन्म समय" : "Time of birth"}
           <input type="time" required value={value.timeOfBirth} onChange={(e) => set({ timeOfBirth: e.target.value })} className={input} />
         </label>
       </div>

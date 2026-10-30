@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/components/i18n";
+import { Link, useLang } from "@/components/i18n";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { RequireAuth } from "@/components/auth/AuthProvider";
@@ -21,19 +21,31 @@ type Lesson = {
 type Course = { title: string; slug: string; lessons: Lesson[] };
 
 /** YouTube / Vimeo links become embeds; anything else plays as a normal video file. */
-function Player({ url }: { url: string | null }) {
-  if (!url) return <div className="flex aspect-video items-center justify-center rounded-xl bg-black/80 text-white/70">Video will be added soon</div>;
+function Player({ url, lang }: { url: string | null; lang: "en" | "hi" }) {
+  if (!url)
+    return (
+      <div className="flex aspect-video items-center justify-center rounded-xl bg-black/80 text-white/70">
+        {lang === "hi" ? "वीडियो जल्द जोड़ा जाएगा" : "Video will be added soon"}
+      </div>
+    );
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
   const vimeo = url.match(/vimeo\.com\/(\d+)/);
   const src = yt ? `https://www.youtube-nocookie.com/embed/${yt[1]}` : vimeo ? `https://player.vimeo.com/video/${vimeo[1]}` : null;
   return src ? (
-    <iframe src={src} className="aspect-video w-full rounded-xl" allow="autoplay; fullscreen; picture-in-picture" allowFullScreen title="Lesson video" />
+    <iframe
+      src={src}
+      className="aspect-video w-full rounded-xl"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowFullScreen
+      title={lang === "hi" ? "पाठ वीडियो" : "Lesson video"}
+    />
   ) : (
     <video src={url} controls controlsList="nodownload" className="aspect-video w-full rounded-xl bg-black" />
   );
 }
 
 function Learn() {
+  const lang = useLang();
   const { slug } = useParams<{ slug: string }>();
   const [saving, setSaving] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -49,8 +61,8 @@ function Learn() {
         const next = c.lessons.findIndex((l) => !l.completed);
         setCurrent(next >= 0 ? next : 0);
       })
-      .catch((e) => setError(e instanceof ApiRequestError ? e.message : "Could not load the course"));
-  }, [slug, attempt]);
+      .catch((e) => setError(e instanceof ApiRequestError ? e.message : lang === "hi" ? "कोर्स लोड नहीं हो सका" : "Could not load the course"));
+  }, [slug, attempt, lang]);
 
   const toggle = async (l: Lesson) => {
     setSaving(true);
@@ -61,12 +73,12 @@ function Learn() {
         body: JSON.stringify({ lessonId: l.id, completed: !l.completed }),
       });
     } catch (e) {
-      toast.error(e instanceof ApiRequestError ? e.message : "Could not save your progress");
+      toast.error(e instanceof ApiRequestError ? e.message : lang === "hi" ? "आपकी प्रगति सहेजी नहीं जा सकी" : "Could not save your progress");
       return;
     } finally {
       setSaving(false);
     }
-    if (!l.completed) toast.success("Lesson marked as complete.");
+    if (!l.completed) toast.success(lang === "hi" ? "पाठ पूर्ण के रूप में चिह्नित किया गया।" : "Lesson marked as complete.");
     setCourse((c) =>
       c
         ? {
@@ -80,9 +92,9 @@ function Learn() {
   if (error)
     return (
       <div className="mx-auto max-w-xl space-y-3 px-4 py-16 text-center">
-        <ErrorState title="Could not open this course" text={error} onRetry={() => setAttempt((a) => a + 1)} />
+        <ErrorState lang={lang} title={lang === "hi" ? "यह कोर्स नहीं खुल सका" : "Could not open this course"} text={error} onRetry={() => setAttempt((a) => a + 1)} />
         <Link href={`/shop/${slug}`} className="inline-block text-sm font-semibold text-brand-saffron hover:underline">
-          Go to the course page
+          {lang === "hi" ? "कोर्स पेज पर जाएं" : "Go to the course page"}
         </Link>
       </div>
     );
@@ -97,13 +109,18 @@ function Learn() {
         <h1 className="text-2xl font-bold text-brand-primary">{course.title}</h1>
         {lesson && (
           <>
-            <Player url={lesson.videoUrl} />
+            <Player url={lesson.videoUrl} lang={lang} />
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-heading text-lg font-bold text-brand-primary">
                 {current + 1}. {lesson.title}
               </h2>
-              <Btn onClick={() => toggle(lesson)} busy={saving} busyText="Saving…" className={lesson.completed ? "btn-outline px-4 py-1.5 text-sm" : "btn-primary px-4 py-1.5 text-sm"}>
-                {lesson.completed ? "Completed ✓" : "Mark as complete"}
+              <Btn
+                onClick={() => toggle(lesson)}
+                busy={saving}
+                busyText={lang === "hi" ? "सहेजा जा रहा है…" : "Saving…"}
+                className={lesson.completed ? "btn-outline px-4 py-1.5 text-sm" : "btn-primary px-4 py-1.5 text-sm"}
+              >
+                {lesson.completed ? (lang === "hi" ? "पूर्ण ✓" : "Completed ✓") : lang === "hi" ? "पूर्ण के रूप में चिह्नित करें" : "Mark as complete"}
               </Btn>
             </div>
             {lesson.notes && <p className="card whitespace-pre-line text-sm">{lesson.notes}</p>}
@@ -112,7 +129,15 @@ function Learn() {
       </section>
       <aside className="card h-fit">
         <p className="text-sm text-slate-500">
-          {done} of {course.lessons.length} lessons done
+          {lang === "hi" ? (
+            <>
+              {course.lessons.length} में से {done} पाठ पूर्ण
+            </>
+          ) : (
+            <>
+              {done} of {course.lessons.length} lessons done
+            </>
+          )}
         </p>
         <ol className="mt-3 space-y-1">
           {course.lessons.map((l, i) => (

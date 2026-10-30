@@ -6,6 +6,7 @@ import { useState } from "react";
 import { api, session, type AstrologerCard, type Master } from "@/lib/api";
 import { useStartChat } from "./useStartChat";
 import { Spinner } from "@/components/ui/Button";
+import type { Lang } from "@/lib/i18n";
 
 const BADGE: Record<string, [string, string]> = {
   "top-rated": ["Top Rated", "border-brand-gold/30 bg-[#FEF9E7] text-brand-gold"],
@@ -13,17 +14,24 @@ const BADGE: Record<string, [string, string]> = {
   celebrity: ["Celebrity", "border-amber-200 bg-amber-50 text-amber-800"],
   verified: ["Verified", "border-emerald-200 bg-emerald-50 text-emerald-700"],
 };
+const BADGE_HI: Record<string, [string, string]> = {
+  "top-rated": ["टॉप रेटेड", "border-brand-gold/30 bg-[#FEF9E7] text-brand-gold"],
+  new: ["नया", "border-indigo-200 bg-indigo-50 text-brand-indigo"],
+  celebrity: ["सेलिब्रिटी", "border-amber-200 bg-amber-50 text-amber-800"],
+  verified: ["सत्यापित", "border-emerald-200 bg-emerald-50 text-emerald-700"],
+};
 const AVATAR_BG = ["bg-brand-dark text-amber-300 border-amber-200", "bg-brand-indigo text-white border-indigo-200"];
 
 /** Astrologer card for the listing page (Stitch "Astrologer Listing" design). */
-export function ListingCard({ a, master, index }: { a: AstrologerCard; master: Master | null; index: number }) {
+export function ListingCard({ a, master, index, lang = "en" }: { a: AstrologerCard; master: Master | null; index: number; lang?: Lang }) {
   const router = useRouter();
-  const { start, busy, error } = useStartChat(a.id, a.slug);
+  const { start, busy, error } = useStartChat(a.id, a.slug, lang);
+  const hi = lang === "hi";
   const [followed, setFollowed] = useState(false);
   const label = (list: { slug?: string; code?: string; en: string }[] | undefined, key: string) => list?.find((x) => (x.slug ?? x.code) === key)?.en ?? key;
   const offer = a.rates.chatOffer !== undefined && a.rates.chatOffer < a.rates.chat;
   const price = offer ? a.rates.chatOffer! : a.rates.chat;
-  const badge = a.badges.map((b) => BADGE[b]).find(Boolean);
+  const badge = a.badges.map((b) => (hi ? BADGE_HI[b] : BADGE[b])).find(Boolean);
   const initials = a.displayName
     .split(" ")
     .filter(Boolean)
@@ -54,7 +62,19 @@ export function ListingCard({ a, master, index }: { a: AstrologerCard; master: M
             className={`absolute bottom-0.5 right-0.5 h-3.5 w-3.5 rounded-full border-2 border-white ${
               a.presence === "online" ? "pulse-online bg-emerald-500" : a.presence === "busy" ? "bg-amber-400" : "bg-slate-300"
             }`}
-            title={a.presence === "online" ? "Online now" : a.presence === "busy" ? "Busy in a consultation" : "Offline"}
+            title={
+              a.presence === "online"
+                ? hi
+                  ? "अभी ऑनलाइन"
+                  : "Online now"
+                : a.presence === "busy"
+                  ? hi
+                    ? "परामर्श में व्यस्त"
+                    : "Busy in a consultation"
+                  : hi
+                    ? "ऑफ़लाइन"
+                    : "Offline"
+            }
           />
         </div>
         <div className="min-w-0 flex-1">
@@ -64,7 +84,7 @@ export function ListingCard({ a, master, index }: { a: AstrologerCard; master: M
           </div>
           <p className="mt-0.5 truncate text-xs font-medium text-slate-500">{a.expertise.map((e) => label(master?.expertise, e)).join(", ")}</p>
           <p className="truncate text-xs font-normal text-slate-500">
-            {a.languages.map((l) => label(master?.languages, l)).join(", ")} · {a.experienceYears} yrs
+            {a.languages.map((l) => label(master?.languages, l)).join(", ")} · {a.experienceYears} {hi ? "वर्ष" : "yrs"}
           </p>
           <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
             {a.rating.count > 0 ? (
@@ -73,11 +93,11 @@ export function ListingCard({ a, master, index }: { a: AstrologerCard; master: M
                   <i className="fa-solid fa-star text-xs" aria-hidden /> {a.rating.average.toFixed(1)}
                 </span>
                 <span className="text-[11px] font-normal text-slate-400">
-                  ({a.rating.count} review{a.rating.count === 1 ? "" : "s"})
+                  {hi ? `(${a.rating.count} समीक्षा${a.rating.count === 1 ? "" : "एं"})` : `(${a.rating.count} review${a.rating.count === 1 ? "" : "s"})`}
                 </span>
               </>
             ) : (
-              <span className="text-[11px] font-medium text-slate-400">No reviews yet</span>
+              <span className="text-[11px] font-medium text-slate-400">{hi ? "अभी तक कोई समीक्षा नहीं" : "No reviews yet"}</span>
             )}
           </div>
         </div>
@@ -85,10 +105,10 @@ export function ListingCard({ a, master, index }: { a: AstrologerCard; master: M
 
       <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3">
         <div className="flex flex-col">
-          {offer && <span className="text-xs text-slate-400 line-through">₹{a.rates.chat}/min</span>}
+          {offer && <span className="text-xs text-slate-400 line-through">₹{a.rates.chat}/{hi ? "मिनट" : "min"}</span>}
           <span className={`font-heading text-sm font-bold ${offer ? "text-brand-saffron" : "text-brand-text"}`}>
             ₹{price}
-            <span className="text-xs font-medium text-slate-500">/min</span>
+            <span className="text-xs font-medium text-slate-500">/{hi ? "मिनट" : "min"}</span>
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -101,25 +121,25 @@ export function ListingCard({ a, master, index }: { a: AstrologerCard; master: M
                 className="flex items-center gap-1.5 rounded-full bg-brand-saffron px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-brand-saffronHover disabled:opacity-60"
               >
                 {busy ? <Spinner className="text-xs" /> : <i className="fa-solid fa-comment-dots text-xs" aria-hidden />}
-                <span>{busy ? "Starting…" : "Chat"}</span>
+                <span>{busy ? (hi ? "शुरू हो रहा है…" : "Starting…") : hi ? "चैट" : "Chat"}</span>
               </button>
-              <button type="button" disabled title="Voice calls are coming soon" className={`${outline} cursor-not-allowed opacity-50`}>
+              <button type="button" disabled title={hi ? "वॉइस कॉल जल्द आ रही है" : "Voice calls are coming soon"} className={`${outline} cursor-not-allowed opacity-50`}>
                 <i className="fa-solid fa-phone text-xs" aria-hidden />
-                <span>Call</span>
+                <span>{hi ? "कॉल" : "Call"}</span>
               </button>
             </>
           ) : (
             <>
               <button type="button" onClick={follow} disabled={followed} className={outline}>
                 <i className={`fa-solid ${followed ? "fa-check text-emerald-600" : "fa-bell text-amber-500"} text-xs`} aria-hidden />
-                <span>{followed ? "Following" : "Follow"}</span>
+                <span>{followed ? (hi ? "फॉलो किया" : "Following") : hi ? "फॉलो करें" : "Follow"}</span>
               </button>
               {a.presence === "busy" ? (
-                <span className="cursor-not-allowed rounded-full border border-slate-200 px-4 py-1.5 text-xs font-semibold text-slate-400">Busy</span>
+                <span className="cursor-not-allowed rounded-full border border-slate-200 px-4 py-1.5 text-xs font-semibold text-slate-400">{hi ? "व्यस्त" : "Busy"}</span>
               ) : (
                 <Link href={`/astrologer/${a.slug}`} className={outline}>
                   <i className="fa-regular fa-user text-xs" aria-hidden />
-                  <span>Profile</span>
+                  <span>{hi ? "प्रोफ़ाइल" : "Profile"}</span>
                 </Link>
               )}
             </>
@@ -131,7 +151,7 @@ export function ListingCard({ a, master, index }: { a: AstrologerCard; master: M
           {error.text}{" "}
           {error.recharge && (
             <Link href="/wallet" className="font-semibold underline">
-              Recharge
+              {hi ? "रिचार्ज करें" : "Recharge"}
             </Link>
           )}
         </p>

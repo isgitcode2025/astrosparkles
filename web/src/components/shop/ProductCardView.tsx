@@ -1,5 +1,6 @@
 import { Link } from "@/components/i18n";
 import type { ProductCard } from "@/lib/api";
+import type { Lang } from "@/lib/i18n";
 
 /** Product image, or a branded placeholder until real photos are uploaded. */
 export function ProductImage({ p, className = "" }: { p: Pick<ProductCard, "image" | "title" | "type">; className?: string }) {
@@ -28,7 +29,7 @@ export function Price({ price, mrp, discountPercent }: { price: number; mrp: num
   );
 }
 
-export function ProductCardView({ p }: { p: ProductCard }) {
+export function ProductCardView({ p, lang = "en" }: { p: ProductCard; lang?: Lang }) {
   return (
     <Link
       href={`/shop/${p.slug}`}
@@ -43,13 +44,13 @@ export function ProductCardView({ p }: { p: ProductCard }) {
         <p className="mt-1 line-clamp-2 text-sm text-slate-600">{p.summary}</p>
         <p className="mt-2 text-xs text-slate-400">
           {p.type === "pooja"
-            ? `Performed online${p.durationMinutes ? ` · ${p.durationMinutes} min` : ""}`
-            : `${p.lessonCount} lessons${p.language ? ` · ${p.language}` : ""}${p.level ? ` · ${p.level}` : ""}`}
+            ? `${lang === "hi" ? "ऑनलाइन आयोजित" : "Performed online"}${p.durationMinutes ? ` · ${p.durationMinutes} ${lang === "hi" ? "मिनट" : "min"}` : ""}`
+            : `${p.lessonCount} ${lang === "hi" ? "पाठ" : "lessons"}${p.language ? ` · ${p.language}` : ""}${p.level ? ` · ${p.level}` : ""}`}
         </p>
         <div className="mt-auto flex items-center justify-between pt-3">
           <Price price={p.price} mrp={p.mrp} discountPercent={p.discountPercent} />
           <span className="rounded-full bg-brand-saffron px-4 py-1.5 text-xs font-bold text-white transition-colors group-hover:bg-brand-saffronHover">
-            {p.type === "pooja" ? "Book pooja" : "View course"}
+            {p.type === "pooja" ? (lang === "hi" ? "पूजा बुक करें" : "Book pooja") : lang === "hi" ? "कोर्स देखें" : "View course"}
           </span>
         </div>
       </div>

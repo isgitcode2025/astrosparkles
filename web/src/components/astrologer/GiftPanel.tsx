@@ -6,9 +6,11 @@ import { useState } from "react";
 import { api, ApiRequestError, session, type GiftItem } from "@/lib/api";
 import { Spinner } from "@/components/ui/Button";
 import { toast } from "@/components/ui/Toaster";
+import type { Lang } from "@/lib/i18n";
 
 /** "Send Gift / सादर दक्षिणा": pick a gift and pay it from the wallet. */
-export function GiftPanel({ astrologerId, slug, name, gifts }: { astrologerId: string; slug: string; name: string; gifts: GiftItem[] }) {
+export function GiftPanel({ astrologerId, slug, name, gifts, lang = "en" }: { astrologerId: string; slug: string; name: string; gifts: GiftItem[]; lang?: Lang }) {
+  const hi = lang === "hi";
   const router = useRouter();
   const [selected, setSelected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -23,11 +25,16 @@ export function GiftPanel({ astrologerId, slug, name, gifts }: { astrologerId: s
     try {
       const r = await api<{ balance: number }>(`/astrologers/${astrologerId}/gifts`, { method: "POST", auth: true, body: JSON.stringify({ gift: item.slug }) });
       window.dispatchEvent(new Event("kj-wallet"));
-      setMsg({ ok: true, text: `${item.emoji} ${item.en} sent to ${name}. Wallet balance: ₹${r.balance.toLocaleString("en-IN")}.` });
-      toast.success(`${item.en} sent to ${name}.`);
+      setMsg({
+        ok: true,
+        text: hi
+          ? `${item.emoji} ${item.en} ${name} को भेजा गया। वॉलेट बैलेंस: ₹${r.balance.toLocaleString("en-IN")}।`
+          : `${item.emoji} ${item.en} sent to ${name}. Wallet balance: ₹${r.balance.toLocaleString("en-IN")}.`,
+      });
+      toast.success(hi ? `${item.en} ${name} को भेजा गया।` : `${item.en} sent to ${name}.`);
       setSelected(null);
     } catch (e) {
-      const text = e instanceof ApiRequestError ? e.message : "Could not send the gift";
+      const text = e instanceof ApiRequestError ? e.message : hi ? "उपहार नहीं भेजा जा सका" : "Could not send the gift";
       setMsg({ ok: false, text, recharge: /balance|add ₹/i.test(text) });
     } finally {
       setBusy(false);
@@ -41,13 +48,13 @@ export function GiftPanel({ astrologerId, slug, name, gifts }: { astrologerId: s
         <div>
           <h2 className="flex items-center gap-2 font-heading text-lg font-bold text-brand-dark">
             <span>
-              Send Gift / <span className="font-mukta">सादर दक्षिणा</span>
+              {hi ? <span className="font-mukta">सादर दक्षिणा</span> : "Send Gift"}
             </span>
             <span className="text-base">🎁</span>
           </h2>
-          <p className="mt-0.5 text-xs text-stone-500">Express gratitude to your astrologer. Paid from your wallet.</p>
+          <p className="mt-0.5 text-xs text-stone-500">{hi ? "अपने ज्योतिषी के प्रति आभार व्यक्त करें। आपके वॉलेट से भुगतान होगा।" : "Express gratitude to your astrologer. Paid from your wallet."}</p>
         </div>
-        <span className="hidden rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 sm:inline">Token of Gratitude</span>
+        <span className="hidden rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700 sm:inline">{hi ? "आभार का प्रतीक" : "Token of Gratitude"}</span>
       </div>
       <div className="grid grid-cols-3 gap-3 pt-2 sm:grid-cols-5" role="radiogroup" aria-label="Gifts">
         {gifts.map((g) => {
@@ -75,7 +82,7 @@ export function GiftPanel({ astrologerId, slug, name, gifts }: { astrologerId: s
           {msg.text}{" "}
           {msg.recharge && (
             <Link href="/wallet" className="font-semibold underline">
-              Recharge wallet
+              {hi ? "वॉलेट रिचार्ज करें" : "Recharge wallet"}
             </Link>
           )}
         </p>
@@ -90,7 +97,7 @@ export function GiftPanel({ astrologerId, slug, name, gifts }: { astrologerId: s
           }`}
         >
           {busy && <Spinner className="mr-2" />}
-          {busy ? "Sending…" : item ? `Send ${item.en} · ₹${item.price}` : "Select a gift"}
+          {busy ? (hi ? "भेजा जा रहा है…" : "Sending…") : item ? (hi ? `${item.en} भेजें · ₹${item.price}` : `Send ${item.en} · ₹${item.price}`) : hi ? "एक उपहार चुनें" : "Select a gift"}
         </button>
       </div>
     </section>

@@ -3,22 +3,29 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Btn } from "./Button";
+import type { Lang } from "@/lib/i18n";
 
 /**
  * Shown when something could not be loaded. Retry calls `onRetry`, or refreshes the
  * server-rendered page when no handler is given.
  */
 export function ErrorState({
-  title = "Could not load this",
-  text = "Please check your connection and try again.",
+  title,
+  text,
   onRetry,
   compact = false,
+  lang = "en",
 }: {
   title?: string;
   text?: string;
   onRetry?: () => unknown;
   compact?: boolean;
+  lang?: Lang;
 }) {
+  const t = lang === "hi" ? "यह लोड नहीं हो सका" : "Could not load this";
+  const d = lang === "hi" ? "कृपया अपना कनेक्शन जांचें और फिर से प्रयास करें।" : "Please check your connection and try again.";
+  title = title ?? t;
+  text = text ?? d;
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const retry = async () => {
@@ -37,8 +44,8 @@ export function ErrorState({
       </div>
       <p className="font-heading text-lg font-bold text-brand-indigo">{title}</p>
       <p className="mt-1 text-sm text-slate-600">{text}</p>
-      <Btn busy={busy} busyText="Retrying…" icon="fa-rotate-right" onClick={retry} className="btn-outline mt-4">
-        Retry
+      <Btn busy={busy} busyText={lang === "hi" ? "पुनः प्रयास हो रहा है…" : "Retrying…"} icon="fa-rotate-right" onClick={retry} className="btn-outline mt-4">
+        {lang === "hi" ? "पुनः प्रयास करें" : "Retry"}
       </Btn>
     </div>
   );

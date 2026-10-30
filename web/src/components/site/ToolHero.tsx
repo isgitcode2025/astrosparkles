@@ -1,5 +1,6 @@
 import { Link } from "@/components/i18n";
 import type { ReactNode } from "react";
+import type { Lang } from "@/lib/i18n";
 
 /** Indigo hero band used on tool and content pages (Stitch theme). Content below can overlap it with -mt-*. */
 export function ToolHero({
@@ -10,6 +11,7 @@ export function ToolHero({
   chips = [],
   children,
   pad = "pb-24",
+  lang = "en",
 }: {
   crumbs?: [string, string?][];
   eyebrow?: string;
@@ -18,6 +20,7 @@ export function ToolHero({
   chips?: [string, string][];
   children?: ReactNode;
   pad?: string;
+  lang?: Lang;
 }) {
   return (
     <section className={`relative overflow-hidden bg-gradient-to-br from-brand-indigo via-[#2d1a63] to-brand-midnight pt-8 text-white sm:pt-10 ${pad}`}>
@@ -28,7 +31,7 @@ export function ToolHero({
         {crumbs.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-4 flex flex-wrap items-center gap-1.5 text-xs text-white/60">
             <Link href="/" className="hover:text-white">
-              Home
+              {lang === "hi" ? "होम" : "Home"}
             </Link>
             {crumbs.map(([label, href]) => (
               <span key={label} className="flex items-center gap-1.5">

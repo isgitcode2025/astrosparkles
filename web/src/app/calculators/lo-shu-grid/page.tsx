@@ -4,6 +4,7 @@ import { useState } from "react";
 import { api, ApiRequestError } from "@/lib/api";
 import { ToolHero } from "@/components/site/ToolHero";
 import { Btn } from "@/components/ui/Button";
+import { useLang } from "@/components/i18n";
 
 type Result = {
   driver: number;
@@ -14,7 +15,44 @@ type Result = {
   completePlanes: string[];
 };
 
+const text = {
+  en: {
+    crumbs: ["Calculators", "Lo Shu Grid"],
+    eyebrow: "Numerology grid",
+    title: "Lo Shu Grid Calculator",
+    subtitle: "See which numbers are strong, repeated or missing in your date of birth.",
+    dob: "Date of birth",
+    submit: "Show my grid",
+    calculating: "Calculating…",
+    error: "Could not calculate",
+    driver: "Driver (moolank):",
+    conductor: "Conductor (bhagyank):",
+    missing: "Missing numbers:",
+    repeated: "Repeated numbers:",
+    planes: "Complete planes:",
+    none: "None",
+  },
+  hi: {
+    crumbs: ["कैलकुलेटर", "लो शू ग्रिड"],
+    eyebrow: "अंक ज्योतिष ग्रिड",
+    title: "लो शू ग्रिड कैलकुलेटर",
+    subtitle: "जानें आपकी जन्मतिथि में कौन से अंक प्रबल, दोहराए गए या अनुपस्थित हैं।",
+    dob: "जन्म तिथि",
+    submit: "मेरा ग्रिड दिखाएं",
+    calculating: "गणना हो रही है…",
+    error: "गणना नहीं हो सकी",
+    driver: "ड्राइवर (मूलांक):",
+    conductor: "कंडक्टर (भाग्यांक):",
+    missing: "अनुपस्थित अंक:",
+    repeated: "दोहराए गए अंक:",
+    planes: "पूर्ण रेखाएं:",
+    none: "कोई नहीं",
+  },
+};
+
 export default function LoShuPage() {
+  const lang = useLang();
+  const l = text[lang];
   const [dob, setDob] = useState("");
   const [r, setR] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +69,7 @@ export default function LoShuPage() {
         }),
       );
     } catch (e) {
-      setError(e instanceof ApiRequestError ? e.message : "Could not calculate");
+      setError(e instanceof ApiRequestError ? e.message : l.error);
     } finally {
       setBusy(false);
     }
@@ -40,10 +78,11 @@ export default function LoShuPage() {
   return (
     <>
       <ToolHero
-        crumbs={[["Calculators"], ["Lo Shu Grid"]]}
-        eyebrow="Numerology grid"
-        title="Lo Shu Grid Calculator"
-        subtitle="See which numbers are strong, repeated or missing in your date of birth."
+        crumbs={[[l.crumbs[0]], [l.crumbs[1]]]}
+        eyebrow={l.eyebrow}
+        title={l.title}
+        subtitle={l.subtitle}
+        lang={lang}
       />
       <div className="container-site relative -mt-16 pb-16">
         <form
@@ -54,7 +93,7 @@ export default function LoShuPage() {
           }}
         >
           <label className="label">
-            Date of birth
+            {l.dob}
             <input
               type="date"
               required
@@ -63,8 +102,8 @@ export default function LoShuPage() {
               className="mt-1 w-full rounded-lg border border-brand-border px-3 py-2.5 font-normal outline-none focus:border-brand-primary"
             />
           </label>
-          <Btn type="submit" busy={busy} busyText="Calculating…" disabled={!dob} className="btn-primary">
-            Show my grid
+          <Btn type="submit" busy={busy} busyText={l.calculating} disabled={!dob} className="btn-primary">
+            {l.submit}
           </Btn>
         </form>
         {error && <p className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
@@ -86,19 +125,19 @@ export default function LoShuPage() {
             </div>
             <div className="card space-y-3">
               <p>
-                <strong>Driver (moolank):</strong> {r.driver}
+                <strong>{l.driver}</strong> {r.driver}
               </p>
               <p>
-                <strong>Conductor (bhagyank):</strong> {r.conductor}
+                <strong>{l.conductor}</strong> {r.conductor}
               </p>
               <p>
-                <strong>Missing numbers:</strong> {r.missing.length ? r.missing.join(", ") : "None"}
+                <strong>{l.missing}</strong> {r.missing.length ? r.missing.join(", ") : l.none}
               </p>
               <p>
-                <strong>Repeated numbers:</strong> {r.repeated.length ? r.repeated.join(", ") : "None"}
+                <strong>{l.repeated}</strong> {r.repeated.length ? r.repeated.join(", ") : l.none}
               </p>
               <p>
-                <strong>Complete planes:</strong> {r.completePlanes.length ? r.completePlanes.map((p) => p[0].toUpperCase() + p.slice(1)).join(", ") : "None"}
+                <strong>{l.planes}</strong> {r.completePlanes.length ? r.completePlanes.map((p) => p[0].toUpperCase() + p.slice(1)).join(", ") : l.none}
               </p>
             </div>
           </div>

@@ -11,6 +11,7 @@ import { Btn } from "@/components/ui/Button";
 import { ResultSkeleton } from "@/components/ui/ResultSkeleton";
 import { startNavProgress } from "@/components/ui/RouteProgress";
 import { toast } from "@/components/ui/Toaster";
+import { useLang } from "@/components/i18n";
 
 type Point = {
   name: string;
@@ -60,20 +61,21 @@ type Kundli = {
 };
 
 const tabs = [
-  { key: "planets", label: "Planets" },
-  { key: "dasha", label: "Vimshottari Dasha" },
-  { key: "mangal", label: "Mangal Dosha" },
+  { key: "planets", en: "Planets", hi: "ग्रह" },
+  { key: "dasha", en: "Vimshottari Dasha", hi: "विंशोत्तरी दशा" },
+  { key: "mangal", en: "Mangal Dosha", hi: "मंगल दोष" },
 ] as const;
-
-const fmtDate = (d: string) =>
-  new Date(`${d}T00:00:00`).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 
 export default function FreeKundliPage() {
   const router = useRouter();
+  const lang = useLang();
+  const hi = lang === "hi";
+  const fmtDate = (d: string) =>
+    new Date(`${d}T00:00:00`).toLocaleDateString(hi ? "hi-IN" : "en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   const [birth, setBirth] = useState(emptyBirth());
   const [style, setStyle] = useState<"north" | "south">("north");
   const [result, setResult] = useState<Kundli | null>(null);
@@ -93,7 +95,7 @@ export default function FreeKundliPage() {
       setResult(r);
       setTimeout(() => document.getElementById("kundli-result")?.scrollIntoView({ behavior: "smooth" }), 50);
     } catch (e) {
-      setError(e instanceof ApiRequestError ? e.message : "Could not create the kundli");
+      setError(e instanceof ApiRequestError ? e.message : hi ? "कुंडली नहीं बन सकी" : "Could not create the kundli");
     } finally {
       setBusy(false);
     }
@@ -102,7 +104,7 @@ export default function FreeKundliPage() {
   const downloadPdf = async () => {
     const token = session.get();
     if (!token) {
-      toast.info("Log in to download your kundli as a PDF.");
+      toast.info(hi ? "अपनी कुंडली को PDF के रूप में डाउनलोड करने के लिए लॉगिन करें।" : "Log in to download your kundli as a PDF.");
       startNavProgress();
       router.push("/login?next=/free-kundli");
       return;
@@ -127,7 +129,7 @@ export default function FreeKundliPage() {
         session.clear("blocked");
         return;
       }
-      if (!res.ok) throw new Error("PDF could not be created");
+      if (!res.ok) throw new Error(hi ? "PDF नहीं बन सका" : "PDF could not be created");
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -135,9 +137,11 @@ export default function FreeKundliPage() {
       a.download = `${(result?.input.name || "kundli").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-kundli.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success("Your kundli PDF is downloading.");
+      toast.success(hi ? "आपकी कुंडली PDF डाउनलोड हो रही है।" : "Your kundli PDF is downloading.");
     } catch (e) {
-      toast.error(e instanceof TypeError ? "Could not reach the server. Please try again." : (e as Error).message);
+      toast.error(
+        e instanceof TypeError ? (hi ? "सर्वर से संपर्क नहीं हो सका। कृपया पुनः प्रयास करें।" : "Could not reach the server. Please try again.") : (e as Error).message,
+      );
     } finally {
       setPdfBusy(false);
     }
@@ -148,14 +152,18 @@ export default function FreeKundliPage() {
   return (
     <>
       <ToolHero
-        crumbs={[["Free Kundli"]]}
-        eyebrow="Janam Kundli"
-        title="Free Kundli Online"
-        subtitle="Enter birth details to see your Vedic birth chart, planet positions, Vimshottari dasha and Mangal dosha check."
+        crumbs={[[hi ? "मुफ़्त कुंडली" : "Free Kundli"]]}
+        eyebrow={hi ? "जन्म कुंडली" : "Janam Kundli"}
+        title={hi ? "मुफ़्त कुंडली ऑनलाइन" : "Free Kundli Online"}
+        subtitle={
+          hi
+            ? "अपना वैदिक जन्म चार्ट, ग्रहों की स्थिति, विंशोत्तरी दशा और मंगल दोष जांच देखने के लिए जन्म विवरण दर्ज करें।"
+            : "Enter birth details to see your Vedic birth chart, planet positions, Vimshottari dasha and Mangal dosha check."
+        }
         chips={[
-          ["fa-chart-pie", "Lagna & Navamsa charts"],
-          ["fa-hourglass-half", "Vimshottari dasha"],
-          ["fa-file-pdf", "PDF download"],
+          ["fa-chart-pie", hi ? "लग्न और नवांश चार्ट" : "Lagna & Navamsa charts"],
+          ["fa-hourglass-half", hi ? "विंशोत्तरी दशा" : "Vimshottari dasha"],
+          ["fa-file-pdf", hi ? "PDF डाउनलोड" : "PDF download"],
         ]}
       />
       <div className="container-site relative -mt-16 pb-16">
@@ -167,21 +175,43 @@ export default function FreeKundliPage() {
               submit();
             }}
           >
-            <h2 className="mb-4 font-heading text-xl font-bold text-brand-primary">Birth details</h2>
+            <h2 className="mb-4 font-heading text-xl font-bold text-brand-primary">{hi ? "जन्म विवरण" : "Birth details"}</h2>
             <BirthForm value={birth} onChange={setBirth} />
-            <Btn type="submit" busy={busy} busyText="Calculating your kundli…" disabled={!isBirthComplete(birth)} className="btn-primary mt-6 w-full">
-              Get my kundli <i className="fa-solid fa-arrow-right" aria-hidden />
+            <Btn
+              type="submit"
+              busy={busy}
+              busyText={hi ? "आपकी कुंडली बनाई जा रही है…" : "Calculating your kundli…"}
+              disabled={!isBirthComplete(birth)}
+              className="btn-primary mt-6 w-full"
+            >
+              {hi ? "मेरी कुंडली प्राप्त करें" : "Get my kundli"} <i className="fa-solid fa-arrow-right" aria-hidden />
             </Btn>
             {error && <p className="mt-3 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-            <p className="mt-3 text-center text-xs text-slate-500">An exact birth time gives the most accurate ascendant and houses.</p>
+            <p className="mt-3 text-center text-xs text-slate-500">
+              {hi ? "सटीक जन्म समय सबसे सही लग्न और भाव देता है।" : "An exact birth time gives the most accurate ascendant and houses."}
+            </p>
           </form>
           <InfoList
-            title="What you get"
+            title={hi ? "आपको क्या मिलेगा" : "What you get"}
             items={[
-              ["fa-chart-pie", "Two charts", "Lagna (D1) and Navamsa (D9), in North or South Indian style."],
-              ["fa-globe", "All planets", "Sign, degree, house, nakshatra and lords for each planet."],
-              ["fa-hourglass-half", "Dasha periods", "Your Vimshottari mahadashas with the one running now."],
-              ["fa-fire", "Mangal dosha", "A quick check with an explanation."],
+              [
+                "fa-chart-pie",
+                hi ? "दो चार्ट" : "Two charts",
+                hi ? "लग्न (D1) और नवांश (D9), उत्तर या दक्षिण भारतीय शैली में।" : "Lagna (D1) and Navamsa (D9), in North or South Indian style.",
+              ],
+              [
+                "fa-globe",
+                hi ? "सभी ग्रह" : "All planets",
+                hi
+                  ? "प्रत्येक ग्रह की राशि, डिग्री, भाव, नक्षत्र और स्वामी।"
+                  : "Sign, degree, house, nakshatra and lords for each planet.",
+              ],
+              [
+                "fa-hourglass-half",
+                hi ? "दशा अवधि" : "Dasha periods",
+                hi ? "अभी चल रही महादशा सहित आपकी विंशोत्तरी महादशाएं।" : "Your Vimshottari mahadashas with the one running now.",
+              ],
+              ["fa-fire", hi ? "मंगल दोष" : "Mangal dosha", hi ? "स्पष्टीकरण के साथ एक त्वरित जांच।" : "A quick check with an explanation."],
             ]}
           />
         </div>
@@ -192,25 +222,33 @@ export default function FreeKundliPage() {
             <div className="card">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-heading text-xl font-bold text-brand-primary">{result.input.name ? `${result.input.name}'s kundli` : "Your kundli"}</h2>
+                  <h2 className="font-heading text-xl font-bold text-brand-primary">
+                    {result.input.name
+                      ? hi
+                        ? `${result.input.name} की कुंडली`
+                        : `${result.input.name}'s kundli`
+                      : hi
+                        ? "आपकी कुंडली"
+                        : "Your kundli"}
+                  </h2>
                   <p className="text-sm text-brand-text/60">
                     {fmtDate(result.input.dateOfBirth)} · {result.input.timeOfBirth} · {result.input.place}
                   </p>
                 </div>
-                <Btn onClick={downloadPdf} busy={pdfBusy} busyText="Preparing PDF…" icon="fa-file-pdf" className="btn-outline px-4 py-2 text-sm">
-                  Download PDF
+                <Btn onClick={downloadPdf} busy={pdfBusy} busyText={hi ? "PDF तैयार हो रहा है…" : "Preparing PDF…"} icon="fa-file-pdf" className="btn-outline px-4 py-2 text-sm">
+                  {hi ? "PDF डाउनलोड करें" : "Download PDF"}
                 </Btn>
               </div>
               <dl className="mt-4 grid grid-cols-2 gap-4 text-center sm:grid-cols-4">
                 {(
                   [
-                    ["Ascendant (Lagna)", result.summary.ascendant],
-                    ["Moon sign (Rashi)", result.summary.moonSign],
-                    ["Sun sign", result.summary.sunSign],
+                    [hi ? "लग्न (ascendant)" : "Ascendant (Lagna)", result.summary.ascendant],
+                    [hi ? "चंद्र राशि" : "Moon sign (Rashi)", result.summary.moonSign],
+                    [hi ? "सूर्य राशि" : "Sun sign", result.summary.sunSign],
                     [
-                      "Nakshatra",
+                      hi ? "नक्षत्र" : "Nakshatra",
                       result.summary.nakshatra
-                        ? `${result.summary.nakshatra}${result.summary.nakshatraPada ? `, pada ${result.summary.nakshatraPada}` : ""}`
+                        ? `${result.summary.nakshatra}${result.summary.nakshatraPada ? `, ${hi ? "पद" : "pada"} ${result.summary.nakshatraPada}` : ""}`
                         : null,
                     ],
                   ] as const
@@ -227,14 +265,14 @@ export default function FreeKundliPage() {
               <div className="flex justify-end gap-2 text-sm">
                 {(["north", "south"] as const).map((s) => (
                   <button key={s} onClick={() => setStyle(s)} className={`rounded-full px-4 py-1.5 pill ${style === s ? "pill-on" : "pill-off"}`}>
-                    {s === "north" ? "North Indian" : "South Indian"}
+                    {s === "north" ? (hi ? "उत्तर भारतीय" : "North Indian") : hi ? "दक्षिण भारतीय" : "South Indian"}
                   </button>
                 ))}
               </div>
               <div className="mt-4 grid gap-8 md:grid-cols-2">
                 <KundliChart
                   style={style}
-                  title="Lagna chart (D1)"
+                  title={hi ? "लग्न चार्ट (D1)" : "Lagna chart (D1)"}
                   ascSign={result.ascendant.sign}
                   items={[
                     {
@@ -250,7 +288,7 @@ export default function FreeKundliPage() {
                 />
                 <KundliChart
                   style={style}
-                  title="Navamsa chart (D9)"
+                  title={hi ? "नवांश चार्ट (D9)" : "Navamsa chart (D9)"}
                   ascSign={result.ascendant.navamsaSign}
                   items={[
                     {
@@ -265,7 +303,9 @@ export default function FreeKundliPage() {
                   ]}
                 />
               </div>
-              <p className="mt-3 text-center text-xs text-brand-text/50">(R) = retrograde. Degrees are within the sign.</p>
+              <p className="mt-3 text-center text-xs text-brand-text/50">
+                {hi ? "(R) = वक्री। डिग्री राशि के भीतर है।" : "(R) = retrograde. Degrees are within the sign."}
+              </p>
             </div>
 
             <div className="card">
@@ -276,7 +316,7 @@ export default function FreeKundliPage() {
                     onClick={() => setTab(t.key)}
                     className={`rounded-full px-4 py-1.5 text-sm pill ${tab === t.key ? "pill-on" : "pill-off"}`}
                   >
-                    {t.label}
+                    {hi ? t.hi : t.en}
                   </button>
                 ))}
               </div>
@@ -286,7 +326,10 @@ export default function FreeKundliPage() {
                   <table className="w-full min-w-max text-left text-sm">
                     <thead className="bg-brand-cream/60 text-[11px] uppercase tracking-wider text-slate-500">
                       <tr>
-                        {["Planet", "Sign", "Degree", "House", "Nakshatra (pada)", "Sign lord", "Nakshatra lord", "Retro"].map((h) => (
+                        {(hi
+                          ? ["ग्रह", "राशि", "डिग्री", "भाव", "नक्षत्र (पद)", "राशि स्वामी", "नक्षत्र स्वामी", "वक्री"]
+                          : ["Planet", "Sign", "Degree", "House", "Nakshatra (pada)", "Sign lord", "Nakshatra lord", "Retro"]
+                        ).map((h) => (
                           <th key={h} className="px-2 py-2 font-medium">
                             {h}
                           </th>
@@ -303,7 +346,7 @@ export default function FreeKundliPage() {
                           <td className="px-2 py-2">{p.nakshatra ? `${p.nakshatra}${p.pada ? ` (${p.pada})` : ""}` : "—"}</td>
                           <td className="px-2 py-2">{p.signLord ?? "—"}</td>
                           <td className="px-2 py-2">{p.nakshatraLord ?? "—"}</td>
-                          <td className="px-2 py-2">{p.retro ? "Yes" : ""}</td>
+                          <td className="px-2 py-2">{p.retro ? (hi ? "हां" : "Yes") : ""}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -315,11 +358,12 @@ export default function FreeKundliPage() {
                     <>
                       {result.dasha.birthBalance && (
                         <p className="mb-3 text-sm text-brand-text/70">
-                          Balance at birth: {result.dasha.birthBalance.lord} {result.dasha.birthBalance.years} years
+                          {hi ? "जन्म के समय शेष" : "Balance at birth"}: {result.dasha.birthBalance.lord} {result.dasha.birthBalance.years}{" "}
+                          {hi ? "वर्ष" : "years"}
                           {result.dasha.current && (
                             <>
                               {" "}
-                              · Running now: <strong>{result.dasha.current}</strong> mahadasha
+                              · {hi ? "अभी चल रही है" : "Running now"}: <strong>{result.dasha.current}</strong> {hi ? "महादशा" : "mahadasha"}
                             </>
                           )}
                         </p>
@@ -327,10 +371,10 @@ export default function FreeKundliPage() {
                       <table className="w-full min-w-max text-left text-sm">
                         <thead className="bg-brand-cream/60 text-[11px] uppercase tracking-wider text-slate-500">
                           <tr>
-                            <th className="px-2 py-2 font-medium">Mahadasha</th>
-                            <th className="px-2 py-2 font-medium">From</th>
-                            <th className="px-2 py-2 font-medium">To</th>
-                            <th className="px-2 py-2 font-medium">Years</th>
+                            <th className="px-2 py-2 font-medium">{hi ? "महादशा" : "Mahadasha"}</th>
+                            <th className="px-2 py-2 font-medium">{hi ? "से" : "From"}</th>
+                            <th className="px-2 py-2 font-medium">{hi ? "तक" : "To"}</th>
+                            <th className="px-2 py-2 font-medium">{hi ? "वर्ष" : "Years"}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -338,7 +382,9 @@ export default function FreeKundliPage() {
                             <tr key={d.start} className={`border-t border-brand-border ${d.current ? "bg-brand-accent/10 font-semibold" : ""}`}>
                               <td className="px-2 py-2">
                                 {d.lord}
-                                {d.current && <span className="ml-2 rounded-full bg-brand-accent px-2 py-0.5 text-xs text-white">Running</span>}
+                                {d.current && (
+                                  <span className="ml-2 rounded-full bg-brand-accent px-2 py-0.5 text-xs text-white">{hi ? "चल रही है" : "Running"}</span>
+                                )}
                               </td>
                               <td className="px-2 py-2">{fmtDate(d.start)}</td>
                               <td className="px-2 py-2">{fmtDate(d.end)}</td>
@@ -349,27 +395,34 @@ export default function FreeKundliPage() {
                       </table>
                     </>
                   ) : (
-                    <p className="text-sm text-brand-text/60">Dasha is not available right now.</p>
+                    <p className="text-sm text-brand-text/60">{hi ? "दशा अभी उपलब्ध नहीं है।" : "Dasha is not available right now."}</p>
                   ))}
 
                 {tab === "mangal" &&
                   (result.mangalDosha ? (
                     <div className={`rounded-xl p-4 ${result.mangalDosha.present ? "bg-red-50" : "bg-green-50"}`}>
                       <p className={`text-lg font-semibold ${result.mangalDosha.present ? "text-red-700" : "text-green-700"}`}>
-                        {result.mangalDosha.present ? "Mangal dosha is present" : "No Mangal dosha"}
+                        {result.mangalDosha.present ? (hi ? "मंगल दोष मौजूद है" : "Mangal dosha is present") : hi ? "मंगल दोष नहीं है" : "No Mangal dosha"}
                       </p>
                       <p className="mt-1 text-sm text-brand-text/80">{result.mangalDosha.explanation}</p>
                       {result.mangalDosha.present && (
-                        <p className="mt-2 text-sm text-brand-text/70">Cancellation rules and remedies need a personal reading by an astrologer.</p>
+                        <p className="mt-2 text-sm text-brand-text/70">
+                          {hi
+                            ? "निवारण नियम और उपायों के लिए ज्योतिषी से व्यक्तिगत परामर्श आवश्यक है।"
+                            : "Cancellation rules and remedies need a personal reading by an astrologer."}
+                        </p>
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-brand-text/60">Mangal dosha check is not available right now.</p>
+                    <p className="text-sm text-brand-text/60">{hi ? "मंगल दोष जांच अभी उपलब्ध नहीं है।" : "Mangal dosha check is not available right now."}</p>
                   ))}
               </div>
             </div>
 
-            <ConsultCta text="Want a personal reading of this chart? Talk to a verified astrologer." />
+            <ConsultCta
+              text={hi ? "इस चार्ट की व्यक्तिगत व्याख्या चाहिए? किसी सत्यापित ज्योतिषी से बात करें।" : "Want a personal reading of this chart? Talk to a verified astrologer."}
+              cta={hi ? "ज्योतिषी से बात करें" : "Talk to an astrologer"}
+            />
           </div>
         )}
       </div>

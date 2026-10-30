@@ -6,9 +6,11 @@ import { api, ApiRequestError, session } from "@/lib/api";
 import { Spinner } from "@/components/ui/Button";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { toast } from "@/components/ui/Toaster";
+import type { Lang } from "@/lib/i18n";
 
 /** Follow / unfollow and share buttons on the astrologer profile card. */
-export function ProfileActions({ astrologerId, slug, name, followers }: { astrologerId: string; slug: string; name: string; followers: number }) {
+export function ProfileActions({ astrologerId, slug, name, followers, lang = "en" }: { astrologerId: string; slug: string; name: string; followers: number; lang?: Lang }) {
+  const hi = lang === "hi";
   const router = useRouter();
   const [state, setState] = useState({ following: false, followerCount: followers });
   const [busy, setBusy] = useState(false);
@@ -32,9 +34,9 @@ export function ProfileActions({ astrologerId, slug, name, followers }: { astrol
     try {
       const r = await api<{ following: boolean; followerCount: number }>(`/astrologers/${astrologerId}/follow`, { method: state.following ? "DELETE" : "POST", auth: true });
       setState(r);
-      toast.success(r.following ? `You follow ${name}.` : `You unfollowed ${name}.`);
+      toast.success(r.following ? (hi ? `आप ${name} को फॉलो करते हैं।` : `You follow ${name}.`) : hi ? `आपने ${name} को अनफॉलो किया।` : `You unfollowed ${name}.`);
     } catch (e) {
-      toast.error(e instanceof ApiRequestError ? e.message : "Could not update");
+      toast.error(e instanceof ApiRequestError ? e.message : hi ? "अपडेट नहीं हो सका" : "Could not update");
     } finally {
       setBusy(false);
     }
@@ -63,13 +65,17 @@ export function ProfileActions({ astrologerId, slug, name, followers }: { astrol
         }`}
       >
         {busy ? <Spinner className="text-[11px]" /> : <i className={`fa-solid ${state.following ? "fa-check" : "fa-plus"} text-[11px]`} aria-hidden />}
-        <span>{state.following ? "Following" : "Follow"}</span>
+        <span>{state.following ? (hi ? "फॉलो किया" : "Following") : hi ? "फॉलो करें" : "Follow"}</span>
       </button>
-      {state.followerCount > 0 && <span className="text-[11px] text-stone-500">{state.followerCount.toLocaleString("en-IN")} followers</span>}
-      <button type="button" onClick={share} aria-label="Share profile" className="rounded-full p-1.5 text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-800">
+      {state.followerCount > 0 && (
+        <span className="text-[11px] text-stone-500">
+          {state.followerCount.toLocaleString("en-IN")} {hi ? "फॉलोअर्स" : "followers"}
+        </span>
+      )}
+      <button type="button" onClick={share} aria-label={hi ? "प्रोफ़ाइल शेयर करें" : "Share profile"} className="rounded-full p-1.5 text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-800">
         <i className={`fa-solid ${copied ? "fa-check text-emerald-600" : "fa-share-nodes"}`} aria-hidden />
       </button>
-      {copied && <span className="text-[11px] text-emerald-600">Link copied</span>}
+      {copied && <span className="text-[11px] text-emerald-600">{hi ? "लिंक कॉपी हो गया" : "Link copied"}</span>}
     </div>
   );
 }

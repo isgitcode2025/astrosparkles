@@ -1,9 +1,10 @@
 "use client";
 
 import { Spinner } from "@/components/ui/Button";
+import type { Lang } from "@/lib/i18n";
 
 /** Mobile number input with the Indian country code (the API accepts Indian numbers). */
-export function PhoneInput({ value, onChange, autoFocus }: { value: string; onChange: (v: string) => void; autoFocus?: boolean }) {
+export function PhoneInput({ value, onChange, autoFocus, lang = "en" }: { value: string; onChange: (v: string) => void; autoFocus?: boolean; lang?: Lang }) {
   return (
     <div className="flex overflow-hidden rounded-xl bg-[#F9F1FF] shadow-sm transition-all focus-within:bg-white focus-within:shadow-[0_0_0_2px_#ffa440]">
       <div className="flex select-none items-center gap-1 bg-[#F4EAFF] px-3 text-sm">
@@ -22,7 +23,7 @@ export function PhoneInput({ value, onChange, autoFocus }: { value: string; onCh
         autoFocus={autoFocus}
         value={value}
         onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))}
-        placeholder="Enter 10-digit mobile number"
+        placeholder={lang === "hi" ? "10 अंकों का मोबाइल नंबर दर्ज करें" : "Enter 10-digit mobile number"}
         className="w-full bg-transparent px-4 py-3.5 text-base text-brand-text outline-none placeholder:text-[#7b7581]"
       />
     </div>
@@ -39,6 +40,7 @@ export function OtpStep({
   onResend,
   onChangeNumber,
   submitLabel,
+  lang = "en",
 }: {
   phone: string;
   code: string;
@@ -48,18 +50,27 @@ export function OtpStep({
   onResend: () => void;
   onChangeNumber: () => void;
   submitLabel: string;
+  lang?: Lang;
 }) {
   return (
     <div className="space-y-4">
       <p className="text-sm text-[#494550]">
-        We sent a 6-digit code to <strong className="text-brand-dark">+91 {phone}</strong>{" "}
+        {lang === "hi" ? (
+          <>
+            हमने <strong className="text-brand-dark">+91 {phone}</strong> पर 6 अंकों का कोड भेजा है{" "}
+          </>
+        ) : (
+          <>
+            We sent a 6-digit code to <strong className="text-brand-dark">+91 {phone}</strong>{" "}
+          </>
+        )}
         <button type="button" onClick={onChangeNumber} className="font-semibold text-brand-saffron hover:underline">
-          Change
+          {lang === "hi" ? "बदलें" : "Change"}
         </button>
       </p>
       <label className="block">
         <span className="mb-1.5 block text-xs font-semibold text-brand-dark">
-          Enter OTP <span className="text-red-600">*</span>
+          {lang === "hi" ? "ओटीपी दर्ज करें" : "Enter OTP"} <span className="text-red-600">*</span>
         </span>
         <input
           type="text"
@@ -80,11 +91,17 @@ export function OtpStep({
         className="group flex w-full items-center justify-center gap-2 rounded-full bg-[#ffa440] px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:bg-brand-saffronHover hover:shadow-lg disabled:opacity-60"
       >
         {busy && <Spinner />}
-        <span>{busy ? "Verifying…" : submitLabel}</span>
+        <span>{busy ? (lang === "hi" ? "सत्यापित हो रहा है…" : "Verifying…") : submitLabel}</span>
         {!busy && <i className="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1" aria-hidden />}
       </button>
       <button type="button" disabled={resendIn > 0 || busy} onClick={onResend} className="w-full text-sm font-semibold text-brand-indigo disabled:text-[#7b7581]">
-        {resendIn > 0 ? `Resend OTP in ${resendIn}s` : "Resend OTP"}
+        {resendIn > 0
+          ? lang === "hi"
+            ? `${resendIn} सेकंड में ओटीपी फिर से भेजें`
+            : `Resend OTP in ${resendIn}s`
+          : lang === "hi"
+            ? "ओटीपी फिर से भेजें"
+            : "Resend OTP"}
       </button>
     </div>
   );

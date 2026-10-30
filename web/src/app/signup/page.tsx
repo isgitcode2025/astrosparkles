@@ -2,7 +2,7 @@
 
 import { Spinner } from "@/components/ui/Button";
 
-import { Link } from "@/components/i18n";
+import { Link, useLang } from "@/components/i18n";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { Divider, OtpStep, PhoneInput } from "@/components/auth/Fields";
@@ -16,7 +16,33 @@ import { defaultBrand, type Brand } from "@/lib/brand";
 const field =
   "w-full rounded-lg bg-[#F9F1FF] py-3 pl-11 pr-4 text-base text-brand-text outline-none transition-all placeholder:text-[#7b7581]/70 focus:bg-white focus:shadow-[0_0_0_2px_#ffa440]";
 
-function ValuePanel() {
+const valueText = {
+  en: {
+    verified: "Verified Vedic astrologers",
+    offer: "Welcome offer",
+    offerLine: "First chat free for 5 minutes + free Vedic kundli with PDF",
+    bullets: [
+      ["Verified", " Vedic astrologers, tarot readers & numerologists"],
+      ["Private", " chats: your phone number is never shown"],
+      ["Free tools:", " kundli, matching, panchang & daily horoscope"],
+    ] as [string, string][],
+    blessing: "May all beings be happy and free from illness",
+  },
+  hi: {
+    verified: "सत्यापित वैदिक ज्योतिषी",
+    offer: "स्वागत ऑफर",
+    offerLine: "पहली चैट 5 मिनट मुफ़्त + मुफ़्त वैदिक कुंडली PDF के साथ",
+    bullets: [
+      ["सत्यापित", " वैदिक ज्योतिषी, टैरो रीडर और अंक ज्योतिषी"],
+      ["निजी", " चैट: आपका फ़ोन नंबर कभी नहीं दिखाया जाता"],
+      ["मुफ़्त टूल्स:", " कुंडली, मिलान, पंचांग और दैनिक राशिफल"],
+    ] as [string, string][],
+    blessing: "सभी प्राणी सुखी और स्वस्थ रहें",
+  },
+};
+
+function ValuePanel({ lang }: { lang: "en" | "hi" }) {
+  const l = valueText[lang];
   return (
     <div className="relative order-2 flex flex-col justify-between overflow-hidden bg-brand-indigo text-[#f6edff] lg:order-1 lg:col-span-5">
       <div className="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-[#ffa440]/20 blur-3xl" />
@@ -32,7 +58,7 @@ function ValuePanel() {
         <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-brand-indigo/85 px-3 py-1 shadow-md backdrop-blur-md">
           <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#ffa440]" />
           <span className="text-[10px] font-semibold uppercase tracking-wide text-[#ffdcbe]">
-            Verified Vedic astrologers
+            {l.verified}
           </span>
         </div>
       </div>
@@ -44,20 +70,16 @@ function ValuePanel() {
             </div>
             <div>
               <span className="mb-0.5 block text-[10px] font-bold uppercase tracking-wider text-[#ffdcbe]">
-                Welcome offer
+                {l.offer}
               </span>
               <p className="font-heading text-lg font-semibold leading-snug text-[#f6edff]">
-                First chat free for 5 minutes + free Vedic kundli with PDF
+                {l.offerLine}
               </p>
             </div>
           </div>
         </div>
         <ul className="mb-4 space-y-2.5 text-sm">
-          {[
-            ["Verified", " Vedic astrologers, tarot readers & numerologists"],
-            ["Private", " chats: your phone number is never shown"],
-            ["Free tools:", " kundli, matching, panchang & daily horoscope"],
-          ].map(([b, t]) => (
+          {l.bullets.map(([b, t]) => (
             <li key={b} className="flex items-center gap-2.5">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#ffa440]/20 text-[10px] text-[#ffa440]">
                 <i className="fa-solid fa-check" aria-hidden />
@@ -77,7 +99,7 @@ function ValuePanel() {
             “सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः”
           </p>
           <p className="mt-0.5 text-[11px] text-[#f6edff]/70">
-            May all beings be happy and free from illness
+            {l.blessing}
           </p>
         </div>
       </div>
@@ -86,6 +108,7 @@ function ValuePanel() {
 }
 
 function SignupForm() {
+  const lang = useLang();
   const router = useRouter();
   const rawNext = useSearchParams().get("next") || "/";
   // only same-site paths, never another website
@@ -133,21 +156,21 @@ function SignupForm() {
     <div className="flex min-h-[calc(100vh-8.5rem)] items-center bg-[#fef7ff]">
       <div className="mx-auto w-full max-w-[1240px] px-4 py-8 md:px-8 md:py-10">
         <div className="grid min-h-[680px] w-full grid-cols-1 overflow-hidden rounded-xl bg-white shadow-[0_16px_40px_-8px_rgba(59,31,110,0.12),0_4px_12px_-2px_rgba(232,145,45,0.06)] lg:grid-cols-12">
-          <ValuePanel />
+          <ValuePanel lang={lang} />
           <div className="order-1 flex flex-col justify-between bg-white p-6 sm:p-10 lg:order-2 lg:col-span-7">
             <div className="mx-auto w-full max-w-[540px]">
               <div className="mb-5">
                 <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-[#ffdcbe]/50 px-2.5 py-1 text-[#8b5000]">
                   <i className="fa-solid fa-gift text-xs" aria-hidden />
                   <span className="text-[11px] font-semibold tracking-wide">
-                    First chat free for 5 minutes
+                    {lang === "hi" ? "पहली चैट 5 मिनट मुफ़्त" : "First chat free for 5 minutes"}
                   </span>
                 </div>
                 <h1 className="font-heading text-3xl font-bold tracking-tight text-brand-dark">
-                  Create your {brand.name} Account
+                  {lang === "hi" ? `अपना ${brand.name} खाता बनाएं` : `Create your ${brand.name} Account`}
                 </h1>
                 <p className="mt-1 text-base text-[#494550]">
-                  Join in seconds with your mobile number.
+                  {lang === "hi" ? "अपने मोबाइल नंबर से कुछ ही सेकंड में जुड़ें।" : "Join in seconds with your mobile number."}
                 </p>
               </div>
 
@@ -167,7 +190,11 @@ function SignupForm() {
                         htmlFor="fullname"
                         className="mb-1.5 block text-xs font-medium text-brand-dark"
                       >
-                        Full Name / <span className="font-mukta">पूरा नाम</span>{" "}
+                        {lang === "hi" ? (
+                          <span className="font-mukta">पूरा नाम</span>
+                        ) : (
+                          <>Full Name / <span className="font-mukta">पूरा नाम</span></>
+                        )}{" "}
                         <span className="font-bold text-red-600">*</span>
                       </label>
                       <div className="relative flex items-center">
@@ -182,7 +209,7 @@ function SignupForm() {
                           maxLength={80}
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          placeholder="e.g. Aditi Singhal"
+                          placeholder={lang === "hi" ? "जैसे अदिति सिंघल" : "e.g. Aditi Singhal"}
                           autoComplete="name"
                           className={field}
                         />
@@ -194,24 +221,29 @@ function SignupForm() {
                           htmlFor="mobile"
                           className="text-xs font-medium text-brand-dark"
                         >
-                          Mobile Number /{" "}
-                          <span className="font-mukta">मोबाइल नंबर</span>{" "}
+                          {lang === "hi" ? (
+                            <span className="font-mukta">मोबाइल नंबर</span>
+                          ) : (
+                            <>
+                              Mobile Number / <span className="font-mukta">मोबाइल नंबर</span>
+                            </>
+                          )}{" "}
                           <span className="font-bold text-red-600">*</span>
                         </label>
                         <span className="text-[10px] font-semibold text-[#494550]">
-                          OTP will be sent to verify
+                          {lang === "hi" ? "सत्यापन के लिए ओटीपी भेजा जाएगा" : "OTP will be sent to verify"}
                         </span>
                       </div>
-                      <PhoneInput value={otp.phone} onChange={otp.setPhone} />
+                      <PhoneInput value={otp.phone} onChange={otp.setPhone} lang={lang} />
                     </div>
                     <div>
                       <label
                         htmlFor="email"
                         className="mb-1.5 block text-xs font-medium text-brand-dark"
                       >
-                        Email Address{" "}
+                        {lang === "hi" ? "ईमेल पता" : "Email Address"}{" "}
                         <span className="font-normal text-[#494550]">
-                          (Optional)
+                          {lang === "hi" ? "(वैकल्पिक)" : "(Optional)"}
                         </span>
                       </label>
                       <div className="relative flex items-center">
@@ -242,7 +274,7 @@ function SignupForm() {
                     >
                       {otp.busy && <Spinner />}
                       <span>
-                        {otp.busy ? "Sending OTP…" : "Sign Up & Get OTP"}
+                        {otp.busy ? (lang === "hi" ? "ओटीपी भेजा जा रहा है…" : "Sending OTP…") : lang === "hi" ? "साइन अप करें और ओटीपी पाएं" : "Sign Up & Get OTP"}
                       </span>
                       <i
                         className={`fa-solid fa-arrow-right text-base ${otp.busy ? "hidden" : ""}`}
@@ -259,7 +291,8 @@ function SignupForm() {
                     resendIn={otp.resendIn}
                     onResend={otp.send}
                     onChangeNumber={() => otp.setStep("phone")}
-                    submitLabel="Verify & create account"
+                    submitLabel={lang === "hi" ? "सत्यापित करें और खाता बनाएं" : "Verify & create account"}
+                    lang={lang}
                   />
                 )}
                 {otp.error && (
@@ -269,7 +302,7 @@ function SignupForm() {
                 )}
               </form>
 
-              {google && <Divider label="Or sign up with" />}
+              {google && <Divider label={lang === "hi" ? "या इसके साथ साइन अप करें" : "Or sign up with"} />}
               <GoogleButton
                 onDone={googleDone}
                 text="signup_with"
@@ -277,32 +310,48 @@ function SignupForm() {
               />
 
               <p className="mt-4 text-center text-[11px] leading-relaxed text-[#7b7581]">
-                By signing up, you agree to our{" "}
-                <Link
-                  href="/terms"
-                  className="font-semibold text-brand-dark hover:underline"
-                >
-                  Terms of Service
-                </Link>{" "}
-                &amp;{" "}
-                <Link
-                  href="/privacy-policy"
-                  className="font-semibold text-brand-dark hover:underline"
-                >
-                  Privacy Policy
-                </Link>
-                . Your birth details and chats are kept private.
+                {lang === "hi" ? (
+                  <>
+                    साइन अप करके, आप हमारी{" "}
+                    <Link href="/terms" className="font-semibold text-brand-dark hover:underline">
+                      सेवा शर्तों
+                    </Link>{" "}
+                    और{" "}
+                    <Link href="/privacy-policy" className="font-semibold text-brand-dark hover:underline">
+                      गोपनीयता नीति
+                    </Link>{" "}
+                    से सहमत होते हैं। आपके जन्म विवरण और चैट निजी रखे जाते हैं।
+                  </>
+                ) : (
+                  <>
+                    By signing up, you agree to our{" "}
+                    <Link
+                      href="/terms"
+                      className="font-semibold text-brand-dark hover:underline"
+                    >
+                      Terms of Service
+                    </Link>{" "}
+                    &amp;{" "}
+                    <Link
+                      href="/privacy-policy"
+                      className="font-semibold text-brand-dark hover:underline"
+                    >
+                      Privacy Policy
+                    </Link>
+                    . Your birth details and chats are kept private.
+                  </>
+                )}
               </p>
             </div>
 
             <div className="mx-auto mt-5 w-full max-w-[540px] space-y-1 rounded-xl bg-[#F9F1FF]/60 p-4 text-center">
               <p className="text-sm text-brand-text">
-                Already have an account?
+                {lang === "hi" ? "पहले से खाता है?" : "Already have an account?"}
                 <Link
                   href={`/login${q}`}
                   className="ml-1 inline-flex items-center gap-1 font-heading text-lg font-bold text-[#8b5000] hover:underline"
                 >
-                  <span>Sign In / Login</span>
+                  <span>{lang === "hi" ? "साइन इन / लॉगिन करें" : "Sign In / Login"}</span>
                   <i
                     className="fa-solid fa-right-to-bracket text-sm"
                     aria-hidden
@@ -314,7 +363,7 @@ function SignupForm() {
                 className="inline-flex items-center gap-1 text-xs font-semibold text-brand-dark transition-colors hover:text-[#8b5000]"
               >
                 <i className="fa-solid fa-star text-[#ffa440]" aria-hidden />
-                <span>Are you an astrologer? Join as Astrologer Partner →</span>
+                <span>{lang === "hi" ? "क्या आप ज्योतिषी हैं? ज्योतिषी पार्टनर के रूप में जुड़ें →" : "Are you an astrologer? Join as Astrologer Partner →"}</span>
               </Link>
             </div>
           </div>

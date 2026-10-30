@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/components/i18n";
+import { Link, useLang } from "@/components/i18n";
 import { ProductImage } from "@/components/shop/ProductCardView";
 import { RequireAuth } from "@/components/auth/AuthProvider";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -13,21 +13,25 @@ import { EmptyState, PageHeader } from "@/components/site/PageShell";
 type MyCourse = ProductCard & { completed: number; totalLessons: number };
 
 function MyCourses() {
+  const lang = useLang();
   const { data: items, error, reload } = useLoad<MyCourse[]>(() => api<MyCourse[]>("/shop/my-courses", { auth: true }));
 
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-      <PageHeader title="My courses" subtitle="Continue where you left off." />
-      <AccountTabs />
+      <PageHeader
+        title={lang === "hi" ? "मेरे कोर्स" : "My courses"}
+        subtitle={lang === "hi" ? "जहाँ से छोड़ा था वहीं से जारी रखें।" : "Continue where you left off."}
+      />
+      <AccountTabs lang={lang} />
       {error ? (
-        <ErrorState compact onRetry={reload} />
+        <ErrorState lang={lang} compact onRetry={reload} />
       ) : !items ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{[0, 1, 2].map((i) => <SkelCard key={i} image lines={1} />)}</div>
       ) : items.length === 0 ? (
-        <EmptyState icon="fa-graduation-cap" title="No courses yet">
+        <EmptyState icon="fa-graduation-cap" title={lang === "hi" ? "अभी तक कोई कोर्स नहीं" : "No courses yet"}>
           <Link href="/shop?type=course" className="font-semibold text-brand-saffron hover:underline">
-            See courses
+            {lang === "hi" ? "कोर्स देखें" : "See courses"}
           </Link>
         </EmptyState>
       ) : (
@@ -47,7 +51,15 @@ function MyCourses() {
                     <div className="h-full bg-brand-accent" style={{ width: `${pct}%` }} />
                   </div>
                   <p className="mt-1 text-xs text-slate-500">
-                    {c.completed} of {c.totalLessons} lessons done
+                    {lang === "hi" ? (
+                      <>
+                        {c.totalLessons} में से {c.completed} पाठ पूर्ण
+                      </>
+                    ) : (
+                      <>
+                        {c.completed} of {c.totalLessons} lessons done
+                      </>
+                    )}
                   </p>
                 </div>
               </Link>

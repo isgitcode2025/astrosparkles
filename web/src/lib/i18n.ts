@@ -1,4 +1,3 @@
-// UI strings for English and Hindi. Every new screen adds its keys to both.
 export const dictionaries = {
   en: {
     "nav.astrologers": "Astrologers",
@@ -51,7 +50,6 @@ export const dictionaries = {
 export type Lang = keyof typeof dictionaries;
 export type DictKey = keyof (typeof dictionaries)["en"];
 
-/** Every language the site routes for. English lives at "/", the others under "/<code>". */
 export const LANGS = ["en", "hi"] as const;
 export const DEFAULT_LANG: Lang = "en";
 
@@ -59,21 +57,12 @@ export function isLang(value: string | null | undefined): value is Lang {
   return value === "en" || value === "hi";
 }
 
-/**
- * Splits a pathname into its language prefix and the rest.
- * "/hi/panchang" -> { lang: "hi", path: "/panchang" };  "/panchang" -> { lang: "en", path: "/panchang" }
- */
 export function splitLang(pathname: string): { lang: Lang; path: string } {
   const m = /^\/(en|hi)(?=\/|$)/.exec(pathname);
   if (!m) return { lang: DEFAULT_LANG, path: pathname || "/" };
   return { lang: m[1] as Lang, path: pathname.slice(m[0].length) || "/" };
 }
 
-/**
- * The URL of a page in a given language. The default language keeps the bare path
- * so existing English URLs never change; the others get a "/<code>" prefix.
- * Query and hash are preserved; anything that is not a site path is returned as is.
- */
 export function localePath(lang: Lang, href: string): string {
   if (!href.startsWith("/")) return href;
   const [beforeHash, hash] = splitOnce(href, "#");

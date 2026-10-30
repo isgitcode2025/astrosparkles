@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { startNavProgress } from "@/components/ui/RouteProgress";
 import { api, ApiRequestError, session, type Consultation } from "@/lib/api";
+import type { Lang } from "@/lib/i18n";
 
 /** Starts a chat with an astrologer (login, balance and "already in a session" handled). */
-export function useStartChat(astrologerId: string, slug: string) {
+export function useStartChat(astrologerId: string, slug: string, lang: Lang = "en") {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ text: string; recharge?: boolean } | null>(null);
@@ -24,7 +25,7 @@ export function useStartChat(astrologerId: string, slug: string) {
       router.push(`/consultation/${c.id}`);
       return; // keep the button busy until the chat page opens
     } catch (e) {
-      const text = e instanceof ApiRequestError ? e.message : "Could not start the consultation";
+      const text = e instanceof ApiRequestError ? e.message : lang === "hi" ? "परामर्श शुरू नहीं हो सका" : "Could not start the consultation";
       setError({ text, recharge: /balance|recharge/i.test(text) });
       if (e instanceof ApiRequestError && e.status === 409 && /ongoing/.test(text)) {
         const active = await api<Consultation | null>("/consultations/active", { auth: true }).catch(() => null);

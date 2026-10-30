@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BuyBox } from "@/components/shop/BuyBox";
 import { ProductImage } from "@/components/shop/ProductCardView";
 import { api, ApiRequestError, type ProductDetail } from "@/lib/api";
+import { serverLang } from "@/lib/server-lang";
 
 export const dynamic = "force-dynamic";
 
@@ -27,15 +28,30 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const p = await load(params.slug);
+  const lang = serverLang();
+  const howItWorks =
+    lang === "hi"
+      ? [
+          ["fa-pen-to-square", "संकल्प के लिए नाम (और गोत्र) बुक करें और साझा करें।"],
+          ["fa-calendar-check", "हम आपके साथ मुहूर्त और तारीख़ की पुष्टि करेंगे।"],
+          ["fa-om", "पुरोहित आपके नाम पर पूजा करेंगे।"],
+          ["fa-video", "आपको My orders में रिकॉर्डिंग मिलेगी।"],
+        ]
+      : [
+          ["fa-pen-to-square", "Book and share the name (and gotra) for the sankalp."],
+          ["fa-calendar-check", "We confirm the muhurat and date with you."],
+          ["fa-om", "The purohit performs the pooja in your name."],
+          ["fa-video", "You receive the recording in My orders."],
+        ];
   return (
     <div className="container-site py-8">
       <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
         <Link href="/" className="hover:text-brand-indigo">
-          Home
+          {lang === "hi" ? "होम" : "Home"}
         </Link>
         <i className="fa-solid fa-chevron-right text-[8px]" aria-hidden />
         <Link href="/shop" className="hover:text-brand-indigo">
-          Poojas &amp; Courses
+          {lang === "hi" ? "पूजा और कोर्स" : "Poojas & Courses"}
         </Link>
         <i className="fa-solid fa-chevron-right text-[8px]" aria-hidden />
         <span className="font-semibold text-brand-indigo">{p.title}</span>
@@ -46,29 +62,31 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <ProductImage p={p} className="h-64 w-full sm:h-80" />
             <div className="p-6">
               <span className="rounded-full bg-brand-cream px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-brand-saffron">
-                {p.type === "pooja" ? "Online pooja" : "Course"}
+                {p.type === "pooja" ? (lang === "hi" ? "ऑनलाइन पूजा" : "Online pooja") : lang === "hi" ? "कोर्स" : "Course"}
               </span>
               <h1 className="mt-3 font-heading text-2xl font-extrabold text-brand-indigo sm:text-3xl">{p.title}</h1>
               {p.titleHi && <p className="text-slate-400">{p.titleHi}</p>}
               <p className="mt-2 text-slate-700">{p.summary}</p>
               <p className="mt-2 text-sm text-slate-500">
                 {p.type === "pooja"
-                  ? [p.performedBy, p.durationMinutes ? `${p.durationMinutes} minutes` : null, "Performed online"].filter(Boolean).join(" · ")
-                  : [p.instructor, p.language, p.level, `${p.lessonCount} lessons`].filter(Boolean).join(" · ")}
+                  ? [p.performedBy, p.durationMinutes ? `${p.durationMinutes} ${lang === "hi" ? "मिनट" : "minutes"}` : null, lang === "hi" ? "ऑनलाइन आयोजित" : "Performed online"]
+                      .filter(Boolean)
+                      .join(" · ")
+                  : [p.instructor, p.language, p.level, `${p.lessonCount} ${lang === "hi" ? "पाठ" : "lessons"}`].filter(Boolean).join(" · ")}
               </p>
             </div>
           </div>
 
           {p.description && (
             <div className="card">
-              <h2 className="font-heading text-lg font-bold text-brand-primary">About</h2>
+              <h2 className="font-heading text-lg font-bold text-brand-primary">{lang === "hi" ? "परिचय" : "About"}</h2>
               <p className="mt-2 whitespace-pre-line text-slate-700">{p.description}</p>
             </div>
           )}
 
           {p.includes.length > 0 && (
             <div className="card">
-              <h2 className="font-heading text-lg font-bold text-brand-primary">What you get</h2>
+              <h2 className="font-heading text-lg font-bold text-brand-primary">{lang === "hi" ? "आपको क्या मिलेगा" : "What you get"}</h2>
               <ul className="mt-3 space-y-2">
                 {p.includes.map((i) => (
                   <li key={i} className="flex gap-2.5 text-slate-700">
@@ -82,15 +100,17 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
           {p.type === "course" && p.lessons.length > 0 && (
             <div className="card">
-              <h2 className="font-heading text-lg font-bold text-brand-primary">Lessons</h2>
+              <h2 className="font-heading text-lg font-bold text-brand-primary">{lang === "hi" ? "पाठ" : "Lessons"}</h2>
               <ol className="mt-3 divide-y divide-brand-border">
                 {p.lessons.map((l, i) => (
                   <li key={l.id} className="flex items-center justify-between py-2 text-sm">
                     <span>
                       {i + 1}. {l.title}
-                      {l.freePreview && <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800">Free preview</span>}
+                      {l.freePreview && (
+                        <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-800">{lang === "hi" ? "मुफ़्त पूर्वावलोकन" : "Free preview"}</span>
+                      )}
                     </span>
-                    {l.durationMinutes > 0 && <span className="text-slate-400">{l.durationMinutes} min</span>}
+                    {l.durationMinutes > 0 && <span className="text-slate-400">{l.durationMinutes} {lang === "hi" ? "मिनट" : "min"}</span>}
                   </li>
                 ))}
               </ol>
@@ -99,14 +119,9 @@ export default async function ProductPage({ params }: { params: { slug: string }
 
           {p.type === "pooja" && (
             <div className="card">
-              <h2 className="font-heading text-lg font-bold text-brand-primary">How it works</h2>
+              <h2 className="font-heading text-lg font-bold text-brand-primary">{lang === "hi" ? "यह कैसे काम करता है" : "How it works"}</h2>
               <ol className="mt-4 grid gap-4 sm:grid-cols-2">
-                {[
-                  ["fa-pen-to-square", "Book and share the name (and gotra) for the sankalp."],
-                  ["fa-calendar-check", "We confirm the muhurat and date with you."],
-                  ["fa-om", "The purohit performs the pooja in your name."],
-                  ["fa-video", "You receive the recording in My orders."],
-                ].map(([icon, text], i) => (
+                {howItWorks.map(([icon, text], i) => (
                   <li key={text} className="flex gap-3 rounded-xl bg-brand-cream/60 p-3 text-sm text-slate-700">
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white font-heading text-sm font-bold text-brand-saffron shadow-xs">
                       {i + 1}
@@ -123,7 +138,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
         </article>
 
         <aside className="h-fit lg:sticky lg:top-20">
-          <BuyBox p={p} />
+          <BuyBox p={p} lang={lang} />
         </aside>
       </div>
     </div>

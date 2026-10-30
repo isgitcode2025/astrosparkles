@@ -2,7 +2,7 @@
 
 import { Spinner } from "@/components/ui/Button";
 
-import { Link } from "@/components/i18n";
+import { Link, useLang } from "@/components/i18n";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { Divider, OtpStep, PhoneInput } from "@/components/auth/Fields";
@@ -21,7 +21,7 @@ type Review = {
 };
 
 /** Left panel: photo, live counts and a real recent review (or a plain value card). */
-function TrustPanel() {
+function TrustPanel({ lang }: { lang: "en" | "hi" }) {
   const [online, setOnline] = useState<number | null>(null);
   const [review, setReview] = useState<Review | null>(null);
   useEffect(() => {
@@ -83,13 +83,13 @@ function TrustPanel() {
             aria-hidden
           />
           <span className="text-xs font-bold tracking-tight text-brand-dark">
-            Verified Vedic astrologers
+            {lang === "hi" ? "सत्यापित वैदिक ज्योतिषी" : "Verified Vedic astrologers"}
           </span>
         </div>
         {online !== null && online > 0 && (
           <div className="hidden items-center gap-1.5 rounded-full bg-brand-dark/60 px-4 py-1.5 text-xs text-white backdrop-blur-md sm:inline-flex">
             <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-            <span>{online} online now</span>
+            <span>{lang === "hi" ? `${online} अभी ऑनलाइन` : `${online} online now`}</span>
           </div>
         )}
       </div>
@@ -111,7 +111,7 @@ function TrustPanel() {
                   </span>
                 </div>
                 <span className="rounded-full bg-[#ffdcbe]/60 px-2 py-0.5 text-[10px] font-semibold text-[#8b5000]">
-                  Real review
+                  {lang === "hi" ? "वास्तविक समीक्षा" : "Real review"}
                 </span>
               </div>
               <p className="line-clamp-3 text-sm font-medium leading-snug text-brand-text">
@@ -120,7 +120,7 @@ function TrustPanel() {
               <div className="mt-2 flex items-center justify-between pt-1 text-[11px] text-[#494550]">
                 <span className="font-medium">{review.name}</span>
                 <span className="text-[#7b7581]">
-                  Consulted {review.astrologerName}
+                  {lang === "hi" ? `${review.astrologerName} से परामर्श लिया` : `Consulted ${review.astrologerName}`}
                 </span>
               </div>
             </>
@@ -131,11 +131,12 @@ function TrustPanel() {
               </div>
               <div>
                 <p className="text-sm font-bold text-brand-dark">
-                  Your first chat is free for 5 minutes
+                  {lang === "hi" ? "आपकी पहली चैट 5 मिनट मुफ़्त है" : "Your first chat is free for 5 minutes"}
                 </p>
                 <p className="mt-0.5 text-xs text-[#494550]">
-                  Talk privately with a verified astrologer. Your phone number
-                  is never shown.
+                  {lang === "hi"
+                    ? "किसी सत्यापित ज्योतिषी से निजी तौर पर बात करें। आपका फ़ोन नंबर कभी नहीं दिखाया जाता।"
+                    : "Talk privately with a verified astrologer. Your phone number is never shown."}
                 </p>
               </div>
             </div>
@@ -147,6 +148,7 @@ function TrustPanel() {
 }
 
 function LoginForm() {
+  const lang = useLang();
   const router = useRouter();
   const rawNext = useSearchParams().get("next") || "/";
   // only same-site paths, never another website
@@ -177,7 +179,7 @@ function LoginForm() {
     <div className="flex min-h-[calc(100vh-8.5rem)] items-center bg-[#fef7ff]">
       <div className="mx-auto w-full max-w-[1240px] px-4 py-8 md:px-8 md:py-10">
         <div className="grid grid-cols-1 overflow-hidden rounded-[2rem] bg-white shadow-[0_20px_50px_-12px_rgba(59,31,110,0.12)] lg:grid-cols-12">
-          <TrustPanel />
+          <TrustPanel lang={lang} />
           <div className="order-1 flex flex-col justify-center bg-white p-6 md:p-10 lg:order-2 lg:col-span-6">
             <div className="mx-auto w-full max-w-[440px]">
               <div className="mb-6 text-center sm:text-left">
@@ -186,22 +188,28 @@ function LoginForm() {
                     className="fa-solid fa-circle-check text-[#8b5000]"
                     aria-hidden
                   />
-                  <span>Sanatan Jyotish Portal</span>
+                  <span>{lang === "hi" ? "सनातन ज्योतिष पोर्टल" : "Sanatan Jyotish Portal"}</span>
                 </div>
                 <h1 className="font-heading text-3xl font-bold tracking-tight text-brand-dark">
-                  Welcome to {brand.name}
+                  {lang === "hi" ? `${brand.name} में आपका स्वागत है` : `Welcome to ${brand.name}`}
                 </h1>
                 <p className="mt-1 text-base text-[#494550]">
-                  Enter your mobile number to connect with verified Vedic
-                  astrologers and keep your kundli and consultations in one
-                  place.
+                  {lang === "hi"
+                    ? "सत्यापित वैदिक ज्योतिषियों से जुड़ने और अपनी कुंडली व परामर्श एक ही जगह रखने के लिए अपना मोबाइल नंबर दर्ज करें।"
+                    : "Enter your mobile number to connect with verified Vedic astrologers and keep your kundli and consultations in one place."}
                 </p>
               </div>
 
               {(reason === "expired" || reason === "blocked") && (
                 <p role="alert" className={`mb-4 flex items-start gap-2 rounded-xl px-4 py-3 text-sm ${reason === "blocked" ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-800"}`}>
                   <i className={`fa-solid ${reason === "blocked" ? "fa-ban" : "fa-clock-rotate-left"} mt-0.5`} aria-hidden />
-                  {reason === "blocked" ? "This account is not active. Please contact support if you think this is a mistake." : "Your session has ended. Please log in again to continue."}
+                  {reason === "blocked"
+                    ? lang === "hi"
+                      ? "यह खाता सक्रिय नहीं है। यदि आपको लगता है कि यह गलती है, तो कृपया सहायता टीम से संपर्क करें।"
+                      : "This account is not active. Please contact support if you think this is a mistake."
+                    : lang === "hi"
+                      ? "आपका सत्र समाप्त हो गया है। जारी रखने के लिए कृपया फिर से लॉगिन करें।"
+                      : "Your session has ended. Please log in again to continue."}
                 </p>
               )}
               <form
@@ -218,12 +226,13 @@ function LoginForm() {
                       htmlFor="mobile"
                       className="block text-xs font-semibold text-brand-dark"
                     >
-                      Mobile Number <span className="text-red-600">*</span>
+                      {lang === "hi" ? "मोबाइल नंबर" : "Mobile Number"} <span className="text-red-600">*</span>
                     </label>
                     <PhoneInput
                       value={otp.phone}
                       onChange={otp.setPhone}
                       autoFocus
+                      lang={lang}
                     />
                     <button
                       type="submit"
@@ -231,12 +240,13 @@ function LoginForm() {
                       className="group flex w-full items-center justify-center gap-2 rounded-full bg-[#ffa440] px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:bg-brand-saffronHover hover:shadow-lg disabled:opacity-60"
                     >
                       {otp.busy && <Spinner />}
-                      <span>{otp.busy ? "Sending OTP…" : "Send OTP"}</span>
+                      <span>{otp.busy ? (lang === "hi" ? "ओटीपी भेजा जा रहा है…" : "Sending OTP…") : lang === "hi" ? "ओटीपी भेजें" : "Send OTP"}</span>
                       {!otp.busy && <i className="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1" aria-hidden />}
                     </button>
                     <p className="text-xs text-[#7b7581]">
-                      New here? Logging in with your number creates your account
-                      automatically.
+                      {lang === "hi"
+                        ? "नए हैं? अपने नंबर से लॉगिन करने पर आपका खाता अपने आप बन जाता है।"
+                        : "New here? Logging in with your number creates your account automatically."}
                     </p>
                   </>
                 ) : (
@@ -248,7 +258,8 @@ function LoginForm() {
                     resendIn={otp.resendIn}
                     onResend={otp.send}
                     onChangeNumber={() => otp.setStep("phone")}
-                    submitLabel="Verify & continue"
+                    submitLabel={lang === "hi" ? "सत्यापित करें और जारी रखें" : "Verify & continue"}
+                    lang={lang}
                   />
                 )}
                 {otp.error && (
@@ -258,7 +269,7 @@ function LoginForm() {
                 )}
               </form>
 
-              {google && <Divider label="Or continue with" />}
+              {google && <Divider label={lang === "hi" ? "या इसके साथ जारी रखें" : "Or continue with"} />}
               <GoogleButton
                 onDone={done}
                 text="signin_with"
@@ -266,46 +277,62 @@ function LoginForm() {
               />
 
               <p className="mt-5 text-center text-sm leading-relaxed text-[#7b7581]">
-                By proceeding, you agree to {brand.name}{" "}
-                <Link
-                  href="/terms"
-                  className="font-semibold text-brand-dark hover:underline"
-                >
-                  Terms of Service
-                </Link>{" "}
-                &amp;{" "}
-                <Link
-                  href="/privacy-policy"
-                  className="font-semibold text-brand-dark hover:underline"
-                >
-                  Privacy Policy
-                </Link>
-                .
+                {lang === "hi" ? (
+                  <>
+                    आगे बढ़ने पर, आप {brand.name} की{" "}
+                    <Link href="/terms" className="font-semibold text-brand-dark hover:underline">
+                      सेवा शर्तों
+                    </Link>{" "}
+                    और{" "}
+                    <Link href="/privacy-policy" className="font-semibold text-brand-dark hover:underline">
+                      गोपनीयता नीति
+                    </Link>{" "}
+                    से सहमत होते हैं।
+                  </>
+                ) : (
+                  <>
+                    By proceeding, you agree to {brand.name}{" "}
+                    <Link
+                      href="/terms"
+                      className="font-semibold text-brand-dark hover:underline"
+                    >
+                      Terms of Service
+                    </Link>{" "}
+                    &amp;{" "}
+                    <Link
+                      href="/privacy-policy"
+                      className="font-semibold text-brand-dark hover:underline"
+                    >
+                      Privacy Policy
+                    </Link>
+                    .
+                  </>
+                )}
               </p>
               <p className="mt-6 text-center text-base text-[#494550]">
-                First time here?
+                {lang === "hi" ? "पहली बार आए हैं?" : "First time here?"}
                 <Link
                   href={`/signup${q}`}
                   className="ml-1 font-bold text-[#8b5000] transition-colors hover:text-brand-dark"
                 >
-                  Create account & get your first chat free →
+                  {lang === "hi" ? "खाता बनाएं और पहली चैट मुफ़्त पाएं →" : "Create account & get your first chat free →"}
                 </Link>
               </p>
               <div className="mt-6 flex items-center justify-center gap-5 text-[11px] font-semibold text-[#7b7581]">
                 <span className="flex items-center gap-1">
                   <i className="fa-solid fa-lock text-[#8b5000]" aria-hidden />{" "}
-                  100% Private
+                  {lang === "hi" ? "100% निजी" : "100% Private"}
                 </span>
                 <span className="flex items-center gap-1">
                   <i className="fa-solid fa-bolt text-[#8b5000]" aria-hidden />{" "}
-                  Instant Access
+                  {lang === "hi" ? "तुरंत पहुंच" : "Instant Access"}
                 </span>
                 <span className="flex items-center gap-1">
                   <i
                     className="fa-solid fa-user-shield text-[#8b5000]"
                     aria-hidden
                   />{" "}
-                  Verified Astrologers
+                  {lang === "hi" ? "सत्यापित ज्योतिषी" : "Verified Astrologers"}
                 </span>
               </div>
             </div>

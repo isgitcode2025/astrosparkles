@@ -34,8 +34,15 @@ import { WalletModule } from './modules/wallet/wallet.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({ uri: config.get<string>('mongo.uri') }),
     }),
-    // default rate limit: 120 requests per minute per IP; OTP routes are stricter. Off in automated tests.
-    ThrottlerModule.forRoot({ throttlers: [{ ttl: 60_000, limit: 120 }], skipIf: () => process.env.NODE_ENV === 'test' }),
+    ThrottlerModule.forRoot({
+      throttlers: [{ ttl: 60_000, limit: 120 }],
+      skipIf: (context) => {
+        if (process.env.NODE_ENV === 'test') return true;
+        const req = context.switchToHttp().getRequest();
+        if (req?.headers?.['x-forwarded-for']) return false;
+        return /^(::ffff:)?(10\.|127\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)|^::1$/.test(req?.socket?.remoteAddress ?? '');
+      },
+    }),
     AuthCommonModule,
     UsersModule,
     AuthModule,

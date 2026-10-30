@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
+import { useLang } from "@/components/i18n";
 
 export type Place = {
   id: string;
@@ -17,7 +18,7 @@ export type Place = {
 export function PlaceSearch({
   value,
   onChange,
-  label = "Birth place",
+  label,
   required,
 }: {
   value: Place | null;
@@ -25,6 +26,8 @@ export function PlaceSearch({
   label?: string;
   required?: boolean;
 }) {
+  const lang = useLang();
+  const hi = lang === "hi";
   const [q, setQ] = useState(value?.label ?? "");
   const [results, setResults] = useState<Place[]>([]);
   const [open, setOpen] = useState(false);
@@ -52,13 +55,13 @@ export function PlaceSearch({
 
   return (
     <label className="label relative">
-      {label}
+      {label ?? (hi ? "जन्म स्थान" : "Birth place")}
       <input
         value={q}
         onChange={(e) => search(e.target.value)}
         onFocus={() => results.length && setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
-        placeholder="Start typing a city, e.g. Indore"
+        placeholder={hi ? "शहर का नाम लिखें, जैसे इंदौर" : "Start typing a city, e.g. Indore"}
         autoComplete="off"
         required={required}
         className={`field ${q && !value ? "!border-amber-400" : ""}`}
@@ -83,7 +86,9 @@ export function PlaceSearch({
           ))}
         </ul>
       )}
-      {q && !value && <span className="mt-1 block text-xs font-normal text-amber-700">Pick a place from the list</span>}
+      {q && !value && (
+        <span className="mt-1 block text-xs font-normal text-amber-700">{hi ? "सूची में से एक स्थान चुनें" : "Pick a place from the list"}</span>
+      )}
     </label>
   );
 }

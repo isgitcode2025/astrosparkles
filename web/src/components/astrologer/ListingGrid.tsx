@@ -4,9 +4,10 @@ import { useState } from "react";
 import { api, type AstrologerCard, type Master, type Paged } from "@/lib/api";
 import { ListingCard } from "./ListingCard";
 import { Spinner } from "@/components/ui/Button";
+import type { Lang } from "@/lib/i18n";
 
 /** Grid with "View more" that appends the next page using the same filters. */
-export function ListingGrid({ initial, query, master }: { initial: Paged<AstrologerCard>; query: string; master: Master | null }) {
+export function ListingGrid({ initial, query, master, lang = "en" }: { initial: Paged<AstrologerCard>; query: string; master: Master | null; lang?: Lang }) {
   const [items, setItems] = useState(initial.items);
   const [page, setPage] = useState(initial.page);
   const [hasMore, setHasMore] = useState(initial.hasMore);
@@ -31,7 +32,7 @@ export function ListingGrid({ initial, query, master }: { initial: Paged<Astrolo
     <>
       <section className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
         {items.map((a, i) => (
-          <ListingCard key={a.id} a={a} master={master} index={i} />
+          <ListingCard key={a.id} a={a} master={master} index={i} lang={lang} />
         ))}
       </section>
       <div className="mt-10 flex flex-col items-center justify-center">
@@ -42,11 +43,21 @@ export function ListingGrid({ initial, query, master }: { initial: Paged<Astrolo
             disabled={loading}
             className="flex items-center gap-2 rounded-full border-2 border-brand-indigo px-8 py-3 font-heading text-sm font-semibold text-brand-indigo shadow-sm transition duration-200 hover:bg-brand-indigo hover:text-white disabled:opacity-60"
           >
-            <span>{loading ? "Loading more…" : `View More Astrologers (${remaining} remaining)`}</span>
+            <span>
+              {loading
+                ? lang === "hi"
+                  ? "लोड हो रहा है…"
+                  : "Loading more…"
+                : lang === "hi"
+                  ? `और ज्योतिषी देखें (${remaining} शेष)`
+                  : `View More Astrologers (${remaining} remaining)`}
+            </span>
             {loading ? <Spinner className="text-xs" /> : <i className="fa-solid fa-arrow-down text-xs" aria-hidden />}
           </button>
         )}
-        <p className="mt-2 text-xs font-medium text-slate-400">All consultations are private. Astrologers never see your phone number.</p>
+        <p className="mt-2 text-xs font-medium text-slate-400">
+          {lang === "hi" ? "सभी परामर्श निजी हैं। ज्योतिषी कभी भी आपका फ़ोन नंबर नहीं देखते।" : "All consultations are private. Astrologers never see your phone number."}
+        </p>
       </div>
     </>
   );

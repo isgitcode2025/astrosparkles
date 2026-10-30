@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "@/components/i18n";
+import { Link, useLang } from "@/components/i18n";
 import { RequireAuth } from "@/components/auth/AuthProvider";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { SkelAccount, SkelRows } from "@/components/ui/Skeleton";
@@ -11,20 +11,24 @@ import { EmptyState, PageHeader, StatusPill } from "@/components/site/PageShell"
 
 /** User's consultation history. */
 function MyConsultations() {
+  const lang = useLang();
   const { data: items, error, reload } = useLoad<Consultation[]>(() => api<Paged<Consultation>>("/consultations/my?limit=50", { auth: true }).then((r) => r.items));
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
-      <PageHeader title="My consultations" subtitle="Your chats with astrologers, newest first." />
-      <AccountTabs />
+      <PageHeader
+        title={lang === "hi" ? "मेरे परामर्श" : "My consultations"}
+        subtitle={lang === "hi" ? "ज्योतिषियों के साथ आपकी चैट, नवीनतम सबसे पहले।" : "Your chats with astrologers, newest first."}
+      />
+      <AccountTabs lang={lang} />
       {error ? (
         <ErrorState compact onRetry={reload} />
       ) : !items ? (
         <SkelRows rows={4} />
       ) : items.length === 0 ? (
-        <EmptyState icon="fa-comments" title="No consultations yet">
+        <EmptyState icon="fa-comments" title={lang === "hi" ? "अभी तक कोई परामर्श नहीं" : "No consultations yet"}>
           <Link href="/astrologers" className="font-semibold text-brand-saffron hover:underline">
-            Talk to an astrologer
+            {lang === "hi" ? "ज्योतिषी से बात करें" : "Talk to an astrologer"}
           </Link>
         </EmptyState>
       ) : (
@@ -39,14 +43,14 @@ function MyConsultations() {
                   <p className="font-heading font-bold text-brand-indigo">{c.astrologerName}</p>
                   <p className="text-sm text-slate-500">
                     {new Date(c.requestedAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} · <span className="capitalize">{c.mode}</span>
-                    {c.prepaid ? " · scheduled" : ""}
+                    {c.prepaid ? (lang === "hi" ? " · शेड्यूल्ड" : " · scheduled") : ""}
                   </p>
                 </div>
                 <div className="text-right text-sm">
-                  <StatusPill status={c.status} />
+                  <StatusPill status={c.status} lang={lang} />
                   {c.status === "completed" && (
                     <p className="text-slate-500">
-                      {c.billedMinutes} min · ₹{c.amount}
+                      {c.billedMinutes} {lang === "hi" ? "मिनट" : "min"} · ₹{c.amount}
                     </p>
                   )}
                 </div>

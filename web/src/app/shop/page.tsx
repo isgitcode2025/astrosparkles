@@ -4,6 +4,7 @@ import { ConsultCta, ToolHero } from "@/components/site/ToolHero";
 import { ProductCardView } from "@/components/shop/ProductCardView";
 import { api, type ProductCard } from "@/lib/api";
 import { ErrorState } from "@/components/ui/ErrorState";
+import { pageLang } from "@/lib/server-lang";
 
 export const metadata: Metadata = {
   title: "Online Poojas & Astrology Courses",
@@ -11,13 +12,21 @@ export const metadata: Metadata = {
 };
 export const dynamic = "force-dynamic";
 
-const tabs = [
-  { key: "", label: "All" },
-  { key: "pooja", label: "Poojas" },
-  { key: "course", label: "Courses" },
-];
+const tabs = {
+  en: [
+    { key: "", label: "All" },
+    { key: "pooja", label: "Poojas" },
+    { key: "course", label: "Courses" },
+  ],
+  hi: [
+    { key: "", label: "सभी" },
+    { key: "pooja", label: "पूजा" },
+    { key: "course", label: "कोर्स" },
+  ],
+} as const;
 
-export default async function ShopPage({ searchParams }: { searchParams: { type?: string } }) {
+export default async function ShopPage({ searchParams }: { searchParams: { type?: string; lang?: string } }) {
+  const lang = pageLang(searchParams.lang);
   const type = searchParams.type === "pooja" || searchParams.type === "course" ? searchParams.type : "";
   let items: ProductCard[] | null = null;
   try {
@@ -31,19 +40,32 @@ export default async function ShopPage({ searchParams }: { searchParams: { type?
   return (
     <>
       <ToolHero
-        crumbs={[["Store"]]}
-        eyebrow="Online pooja & learning"
-        title="Poojas & Courses"
-        subtitle="Poojas performed in your name by our purohits with the recording shared, and courses to learn astrology yourself."
-        chips={[
-          ["fa-video", "Recording shared after the pooja"],
-          ["fa-wallet", "Pay from your wallet"],
-          ["fa-hands-praying", "Sankalp in your name and gotra"],
-        ]}
+        lang={lang}
+        crumbs={[[lang === "hi" ? "स्टोर" : "Store"]]}
+        eyebrow={lang === "hi" ? "ऑनलाइन पूजा और सीखना" : "Online pooja & learning"}
+        title={lang === "hi" ? "पूजा और कोर्स" : "Poojas & Courses"}
+        subtitle={
+          lang === "hi"
+            ? "हमारे पुरोहितों द्वारा आपके नाम पर की जाने वाली पूजा, जिसकी रिकॉर्डिंग साझा की जाती है, और स्वयं ज्योतिष सीखने के कोर्स।"
+            : "Poojas performed in your name by our purohits with the recording shared, and courses to learn astrology yourself."
+        }
+        chips={
+          lang === "hi"
+            ? [
+                ["fa-video", "पूजा के बाद रिकॉर्डिंग साझा की जाएगी"],
+                ["fa-wallet", "अपने वॉलेट से भुगतान करें"],
+                ["fa-hands-praying", "आपके नाम और गोत्र में संकल्प"],
+              ]
+            : [
+                ["fa-video", "Recording shared after the pooja"],
+                ["fa-wallet", "Pay from your wallet"],
+                ["fa-hands-praying", "Sankalp in your name and gotra"],
+              ]
+        }
       >
         <div className="mt-6 flex flex-wrap items-center gap-3">
           <div className="inline-flex rounded-full bg-white/10 p-1 ring-1 ring-white/15">
-            {tabs.map((t) => (
+            {tabs[lang].map((t) => (
               <Link
                 key={t.key}
                 href={t.key ? `/shop?type=${t.key}` : "/shop"}
@@ -55,40 +77,40 @@ export default async function ShopPage({ searchParams }: { searchParams: { type?
             ))}
           </div>
           <Link href="/shop/orders" className="text-sm font-semibold text-brand-gold hover:underline">
-            My orders
+            {lang === "hi" ? "मेरे ऑर्डर" : "My orders"}
           </Link>
           <Link href="/shop/my-courses" className="text-sm font-semibold text-brand-gold hover:underline">
-            My courses
+            {lang === "hi" ? "मेरे कोर्स" : "My courses"}
           </Link>
         </div>
       </ToolHero>
       <div className="container-site relative -mt-14 pb-16">
         {!items ? (
-          <ErrorState title="Poojas and courses could not be loaded" />
+          <ErrorState lang={lang} title={lang === "hi" ? "पूजा और कोर्स लोड नहीं हो सके" : "Poojas and courses could not be loaded"} />
         ) : items.length === 0 ? (
-          <p className="card">Nothing here yet.</p>
+          <p className="card">{lang === "hi" ? "यहाँ अभी कुछ नहीं है।" : "Nothing here yet."}</p>
         ) : (
           <div className="space-y-10">
             {poojas.length > 0 && (
               <section>
                 {!type && (
                   <h2 className="mb-4 inline-block rounded-full bg-white px-4 py-1 shadow-soft font-heading text-xl font-bold text-brand-indigo">
-                    Online poojas
+                    {lang === "hi" ? "ऑनलाइन पूजा" : "Online poojas"}
                   </h2>
                 )}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {poojas.map((p) => (
-                    <ProductCardView key={p.id} p={p} />
+                    <ProductCardView key={p.id} p={p} lang={lang} />
                   ))}
                 </div>
               </section>
             )}
             {courses.length > 0 && (
               <section>
-                {!type && <h2 className="mb-4 font-heading text-xl font-bold text-brand-indigo">Courses</h2>}
+                {!type && <h2 className="mb-4 font-heading text-xl font-bold text-brand-indigo">{lang === "hi" ? "कोर्स" : "Courses"}</h2>}
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {courses.map((p) => (
-                    <ProductCardView key={p.id} p={p} />
+                    <ProductCardView key={p.id} p={p} lang={lang} />
                   ))}
                 </div>
               </section>
@@ -97,7 +119,10 @@ export default async function ShopPage({ searchParams }: { searchParams: { type?
         )}
 
         <div className="mt-10">
-          <ConsultCta text="Not sure which pooja suits your chart? Ask an astrologer first." />
+          <ConsultCta
+            text={lang === "hi" ? "निश्चित नहीं कि आपकी कुंडली के लिए कौन सी पूजा उपयुक्त है? पहले किसी ज्योतिषी से पूछें।" : "Not sure which pooja suits your chart? Ask an astrologer first."}
+            cta={lang === "hi" ? "ज्योतिषी से बात करें" : "Talk to an astrologer"}
+          />
         </div>
       </div>
     </>
