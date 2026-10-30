@@ -1,7 +1,6 @@
 "use client";
 
-import { Link, useLang } from "@/components/i18n";
-import { useRouter } from "next/navigation";
+import { Link, useLang, useLocaleRouter } from "@/components/i18n";
 import type { Lang } from "@/lib/i18n";
 import { useCallback, useEffect, useState } from "react";
 import { ScheduleEditor } from "@/components/dashboard/ScheduleEditor";
@@ -77,7 +76,7 @@ function ReviewCell({ c, onDone, lang }: { c: Consultation; onDone: () => void; 
 
 function AstroDashboard() {
   const lang = useLang();
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [tab, setTab] = useState<Tab>("overview");
   const [profile, setProfile] = useState<MyProfile | null>(null);
   const [incoming, setIncoming] = useState<Consultation[]>([]);

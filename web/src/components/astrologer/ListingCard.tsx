@@ -1,7 +1,6 @@
 "use client";
 
-import { Link } from "@/components/i18n";
-import { useRouter } from "next/navigation";
+import { Link, useLocaleRouter } from "@/components/i18n";
 import { useState } from "react";
 import { api, session, type AstrologerCard, type Master } from "@/lib/api";
 import { useStartChat } from "./useStartChat";
@@ -24,7 +23,7 @@ const AVATAR_BG = ["bg-brand-dark text-amber-300 border-amber-200", "bg-brand-in
 
 /** Astrologer card for the listing page (Stitch "Astrologer Listing" design). */
 export function ListingCard({ a, master, index, lang = "en" }: { a: AstrologerCard; master: Master | null; index: number; lang?: Lang }) {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const { start, busy, error } = useStartChat(a.id, a.slug, lang);
   const hi = lang === "hi";
   const [followed, setFollowed] = useState(false);

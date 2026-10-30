@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useLocaleRouter } from "@/components/i18n";
 import { useEffect, useState } from "react";
 import { api, ApiRequestError, session } from "@/lib/api";
 import { Spinner } from "@/components/ui/Button";
@@ -11,7 +11,7 @@ import type { Lang } from "@/lib/i18n";
 /** Follow / unfollow and share buttons on the astrologer profile card. */
 export function ProfileActions({ astrologerId, slug, name, followers, lang = "en" }: { astrologerId: string; slug: string; name: string; followers: number; lang?: Lang }) {
   const hi = lang === "hi";
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [state, setState] = useState({ following: false, followerCount: followers });
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);

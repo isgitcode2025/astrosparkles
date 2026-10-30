@@ -1,7 +1,6 @@
 "use client";
 
-import { Link } from "@/components/i18n";
-import { useRouter } from "next/navigation";
+import { Link, useLocaleRouter } from "@/components/i18n";
 import { useState } from "react";
 import { api, ApiRequestError, session, type GiftItem } from "@/lib/api";
 import { Spinner } from "@/components/ui/Button";
@@ -11,7 +10,7 @@ import type { Lang } from "@/lib/i18n";
 /** "Send Gift / सादर दक्षिणा": pick a gift and pay it from the wallet. */
 export function GiftPanel({ astrologerId, slug, name, gifts, lang = "en" }: { astrologerId: string; slug: string; name: string; gifts: GiftItem[]; lang?: Lang }) {
   const hi = lang === "hi";
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [selected, setSelected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string; recharge?: boolean } | null>(null);

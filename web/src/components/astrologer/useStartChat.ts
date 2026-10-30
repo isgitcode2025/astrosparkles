@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useLocaleRouter } from "@/components/i18n";
 import { useState } from "react";
 import { startNavProgress } from "@/components/ui/RouteProgress";
 import { api, ApiRequestError, session, type Consultation } from "@/lib/api";
@@ -8,7 +8,7 @@ import type { Lang } from "@/lib/i18n";
 
 /** Starts a chat with an astrologer (login, balance and "already in a session" handled). */
 export function useStartChat(astrologerId: string, slug: string, lang: Lang = "en") {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ text: string; recharge?: boolean } | null>(null);
 

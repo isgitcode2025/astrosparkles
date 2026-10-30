@@ -1,2 +1,2 @@
-export { LangProvider, useLang, useT, useHref, useSwitchTo } from "./LangProvider";
+export { LangProvider, useLang, useT, useHref, useSwitchTo, useLocaleRouter } from "./LangProvider";
 export { Link } from "./Link";

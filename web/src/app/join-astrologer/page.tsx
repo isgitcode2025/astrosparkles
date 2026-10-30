@@ -1,7 +1,6 @@
 "use client";
 
-import { Link, useLang } from "@/components/i18n";
-import { useRouter } from "next/navigation";
+import { Link, useLang, useLocaleRouter } from "@/components/i18n";
 import { useEffect, useState } from "react";
 import { api, ApiRequestError, session, type Master } from "@/lib/api";
 import { InfoList, ToolHero } from "@/components/site/ToolHero";
@@ -42,7 +41,7 @@ function Pills({ items, value, onChange }: { items: { key: string; label: string
 /** Apply to join as an astrologer. The application goes to the admin for review. */
 export default function JoinAstrologerPage() {
   const lang = useLang();
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [master, setMaster] = useState<Master | null>(null);
   const [mine, setMine] = useState<Mine | null | undefined>(undefined);
   const [form, setForm] = useState({

@@ -1,7 +1,6 @@
 "use client";
 
-import { Link } from "@/components/i18n";
-import { useRouter } from "next/navigation";
+import { Link, useLocaleRouter } from "@/components/i18n";
 import { useEffect, useState } from "react";
 import { api, ApiRequestError, session, type ProductDetail, type ShopOrder } from "@/lib/api";
 import { Price } from "./ProductCardView";
@@ -15,7 +14,7 @@ const field = "field";
 
 /** Booking form for poojas and buy button for courses. Pays from the wallet. */
 export function BuyBox({ p, lang = "en" }: { p: ProductDetail; lang?: Lang }) {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [enrolled, setEnrolled] = useState(p.enrolled);
   const [name, setName] = useState("");
   const [gotra, setGotra] = useState("");

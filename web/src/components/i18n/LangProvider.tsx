@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useMemo } from "react";
 import { DEFAULT_LANG, localePath, splitLang, t, type DictKey, type Lang } from "@/lib/i18n";
 
@@ -8,7 +8,9 @@ const LangContext = createContext<Lang>(DEFAULT_LANG);
 
 /** Publishes the language chosen in the URL to every client component below. */
 export function LangProvider({ lang, children }: { lang: Lang; children: React.ReactNode }) {
-  return <LangContext.Provider value={lang}>{children}</LangContext.Provider>;
+  const pathname = usePathname();
+  const current = pathname ? splitLang(pathname).lang : lang;
+  return <LangContext.Provider value={current}>{children}</LangContext.Provider>;
 }
 
 export function useLang(): Lang {
@@ -37,4 +39,22 @@ export function useSwitchTo(): (target: Lang) => string {
     const { path } = splitLang(pathname);
     return (target: Lang) => localePath(target, path);
   }, [pathname]);
+}
+
+/**
+ * next/navigation's router, but push/replace keep the reader in their current
+ * language. Use this instead of useRouter() for any programmatic navigation
+ * to a site path (e.g. after a form submits) so "/hi/..." isn't lost.
+ */
+export function useLocaleRouter() {
+  const router = useRouter();
+  const href = useHref();
+  return useMemo(
+    () => ({
+      ...router,
+      push: (url: string, options?: Parameters<typeof router.push>[1]) => router.push(href(url), options),
+      replace: (url: string, options?: Parameters<typeof router.replace>[1]) => router.replace(href(url), options),
+    }),
+    [router, href],
+  );
 }

@@ -5,8 +5,7 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { Loading as SkelLoading, Skel } from "@/components/ui/Skeleton";
 import { toast } from "@/components/ui/Toaster";
 
-import { Link } from "@/components/i18n";
-import { useRouter } from "next/navigation";
+import { Link, useLocaleRouter } from "@/components/i18n";
 import { useEffect, useState } from "react";
 import { api, ApiRequestError, fmtSlotDate, fmtSlotTime, session, type Booking, type SlotsResponse } from "@/lib/api";
 import type { Lang } from "@/lib/i18n";
@@ -14,7 +13,7 @@ import type { Lang } from "@/lib/i18n";
 /** "Book Session" button plus a slot picker dialog. The price is paid from the wallet when booking. */
 export function BookSession({ astrologerId, slug, name, lang = "en" }: { astrologerId: string; slug: string; name?: string; lang?: Lang }) {
   const hi = lang === "hi";
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<SlotsResponse | null>(null);
   const [loadError, setLoadError] = useState(false);

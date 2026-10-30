@@ -1,7 +1,6 @@
 "use client";
 
-import { Link, useLang } from "@/components/i18n";
-import { useRouter } from "next/navigation";
+import { Link, useLang, useLocaleRouter } from "@/components/i18n";
 import { useEffect, useState } from "react";
 import { RequireAuth } from "@/components/auth/AuthProvider";
 import { Btn } from "@/components/ui/Button";
@@ -18,7 +17,7 @@ import { api, ApiRequestError, fmtSlotTime, type Booking } from "@/lib/api";
 /** The user's scheduled (prepaid) sessions: join at the start time, or cancel for a refund. */
 function MyBookings() {
   const lang = useLang();
-  const router = useRouter();
+  const router = useLocaleRouter();
   const [scope, setScope] = useState<"upcoming" | "past">("upcoming");
   const { data: items, error, reload: load } = useLoad(() => api<Booking[]>(`/bookings/my?scope=${scope}`, { auth: true }), [scope]);
   const [busy, setBusy] = useState<string | null>(null);

@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BirthForm, emptyBirth, isBirthComplete, toBirthInput } from "@/components/astro/BirthForm";
 import { KundliChart } from "@/components/astro/KundliChart";
@@ -11,7 +10,7 @@ import { Btn } from "@/components/ui/Button";
 import { ResultSkeleton } from "@/components/ui/ResultSkeleton";
 import { startNavProgress } from "@/components/ui/RouteProgress";
 import { toast } from "@/components/ui/Toaster";
-import { useLang } from "@/components/i18n";
+import { useLang, useLocaleRouter } from "@/components/i18n";
 
 type Point = {
   name: string;
@@ -67,7 +66,7 @@ const tabs = [
 ] as const;
 
 export default function FreeKundliPage() {
-  const router = useRouter();
+  const router = useLocaleRouter();
   const lang = useLang();
   const hi = lang === "hi";
   const fmtDate = (d: string) =>

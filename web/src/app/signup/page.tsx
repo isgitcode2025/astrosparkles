@@ -2,8 +2,8 @@
 
 import { Spinner } from "@/components/ui/Button";
 
-import { Link, useLang } from "@/components/i18n";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Link, useLang, useLocaleRouter } from "@/components/i18n";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { Divider, OtpStep, PhoneInput } from "@/components/auth/Fields";
 import { GoogleButton } from "@/components/auth/GoogleButton";
@@ -109,7 +109,7 @@ function ValuePanel({ lang }: { lang: "en" | "hi" }) {
 
 function SignupForm() {
   const lang = useLang();
-  const router = useRouter();
+  const router = useLocaleRouter();
   const rawNext = useSearchParams().get("next") || "/";
   // only same-site paths, never another website
   const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";

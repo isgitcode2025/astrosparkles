@@ -1,7 +1,7 @@
 "use client";
 
-import { Link } from "@/components/i18n";
-import { usePathname, useRouter } from "next/navigation";
+import { Link, useLocaleRouter } from "@/components/i18n";
+import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { api, ApiRequestError, session, TOKEN_KEY, type Me, type SignOutReason } from "@/lib/api";
 import { disconnectSocket } from "@/lib/socket";
@@ -143,7 +143,7 @@ export function RequireAuth({
   deniedText?: string;
 }) {
   const { status, me, refresh } = useAuth();
-  const router = useRouter();
+  const router = useLocaleRouter();
   const loginHref = useLoginHref();
 
   useEffect(() => {

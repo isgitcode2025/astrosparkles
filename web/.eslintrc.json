@@ -1,3 +1,20 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          { "name": "next/link", "message": "Use `Link` from \"@/components/i18n\" so navigation keeps the current language." },
+          { "name": "next/navigation", "importNames": ["useRouter"], "message": "Use `useLocaleRouter` from \"@/components/i18n\" so push/replace keep the current language." }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/app/admin/**", "src/components/admin/**", "src/components/i18n/**", "src/components/Header.tsx", "src/components/ui/ErrorState.tsx"],
+      "rules": { "no-restricted-imports": "off" }
+    }
+  ]
 }
