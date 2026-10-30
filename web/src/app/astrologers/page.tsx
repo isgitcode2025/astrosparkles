@@ -148,7 +148,8 @@ export default async function AstrologersPage({ searchParams }: { searchParams: 
     api<Paged<AstrologerCard>>(`/astrologers?${qs}`, { cache: "no-store" }).catch(() => null),
   ]);
   const sort = searchParams.sort ?? "recommended";
-  const expertiseLabel = searchParams.expertise ? master?.expertise.find((e) => e.slug === searchParams.expertise)?.en : null;
+  const expertiseItem = searchParams.expertise ? master?.expertise.find((e) => e.slug === searchParams.expertise) : null;
+  const expertiseLabel = expertiseItem ? (lang === "hi" ? expertiseItem.hi : expertiseItem.en) : null;
   const trust = l.trust;
 
   return (
@@ -169,7 +170,7 @@ export default async function AstrologersPage({ searchParams }: { searchParams: 
               </Chip>
               {(master?.concerns ?? []).map((c) => (
                 <Chip key={c.slug} href={hrefWith(searchParams, { concern: c.slug })} active={searchParams.concern === c.slug}>
-                  {c.en}
+                  {lang === "hi" ? c.hi : c.en}
                 </Chip>
               ))}
             </div>
@@ -181,7 +182,7 @@ export default async function AstrologersPage({ searchParams }: { searchParams: 
                 .filter((lg) => LANGS.includes(lg.code))
                 .map((lg) => (
                   <Chip small key={lg.code} href={hrefWith(searchParams, { language: lg.code })} active={searchParams.language === lg.code}>
-                    {lg.en}
+                    {lang === "hi" ? lg.hi : lg.en}
                   </Chip>
                 ))}
               <Chip small href={hrefWith(searchParams, { online: searchParams.online === "1" ? undefined : "1" })} active={searchParams.online === "1"}>
