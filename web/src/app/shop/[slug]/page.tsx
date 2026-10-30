@@ -18,11 +18,15 @@ async function load(slug: string) {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const lang = serverLang();
   try {
     const p = await load(params.slug);
-    return { title: p.title, description: p.summary };
+    const title = lang === "hi" ? p.titleHi || p.title : p.title;
+    // no Hindi summary field on the API type; fall back to the English summary
+    const description = p.summary;
+    return { title, description };
   } catch {
-    return { title: "Shop" };
+    return { title: lang === "hi" ? "स्टोर" : "Shop" };
   }
 }
 

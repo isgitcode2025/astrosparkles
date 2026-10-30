@@ -6,12 +6,15 @@ import { ErrorState } from "@/components/ui/ErrorState";
 import { Loading, Skel } from "@/components/ui/Skeleton";
 import { toast } from "@/components/ui/Toaster";
 import { api, ApiRequestError, type WeeklySchedule } from "@/lib/api";
+import type { Lang } from "@/lib/i18n";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const DAYS_HI = ["रवि", "सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि"];
 type Window = { day: number; start: string; end: string };
 
 /** Weekly hours editor for scheduled sessions. Several windows per day; times in IST. */
-export function ScheduleEditor() {
+export function ScheduleEditor({ lang = "en" }: { lang?: Lang }) {
+  const hi = lang === "hi";
   const [s, setS] = useState<WeeklySchedule | null>(null);
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -27,10 +30,10 @@ export function ScheduleEditor() {
     load();
   }, [load]);
 
-  if (loadFailed) return <ErrorState compact title="Could not load your schedule" onRetry={load} />;
+  if (loadFailed) return <ErrorState compact title={hi ? "आपका शेड्यूल लोड नहीं हो सका" : "Could not load your schedule"} onRetry={load} lang={lang} />;
   if (!s)
     return (
-      <Loading label="Loading your schedule" className="space-y-3">
+      <Loading label={hi ? "आपका शेड्यूल लोड हो रहा है" : "Loading your schedule"} className="space-y-3">
         <Skel className="h-8 w-80 max-w-full" />
         {Array.from({ length: 7 }, (_, i) => (
           <Skel key={i} className="h-12 w-full !rounded-xl" />
@@ -65,10 +68,18 @@ export function ScheduleEditor() {
         body: JSON.stringify({ enabled: s.enabled, slotMinutes: s.slotMinutes, days: s.days }),
       });
       setS(saved);
-      toast.success(saved.enabled ? "Schedule saved. Users can now book your open slots." : "Schedule saved. Scheduled sessions are switched off.");
+      toast.success(
+        saved.enabled
+          ? hi
+            ? "शेड्यूल सेव हो गया। यूज़र्स अब आपके खुले स्लॉट बुक कर सकते हैं।"
+            : "Schedule saved. Users can now book your open slots."
+          : hi
+            ? "शेड्यूल सेव हो गया। शेड्यूल्ड सेशन बंद कर दिए गए हैं।"
+            : "Schedule saved. Scheduled sessions are switched off.",
+      );
     } catch (e) {
-      setMsg({ ok: false, text: e instanceof ApiRequestError ? e.message : "Could not save" });
-      toast.error(e instanceof ApiRequestError ? e.message : "Could not save the schedule");
+      setMsg({ ok: false, text: e instanceof ApiRequestError ? e.message : hi ? "सेव नहीं हो सका" : "Could not save" });
+      toast.error(e instanceof ApiRequestError ? e.message : hi ? "शेड्यूल सेव नहीं हो सका" : "Could not save the schedule");
     } finally {
       setSaving(false);
     }
@@ -85,35 +96,35 @@ export function ScheduleEditor() {
             <span className="h-6 w-11 rounded-full bg-slate-300 transition-colors peer-checked:bg-emerald-500 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-saffron" />
             <span className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform peer-checked:translate-x-5" />
           </span>
-          <span className="text-sm font-semibold text-brand-indigo">Accept scheduled sessions</span>
+          <span className="text-sm font-semibold text-brand-indigo">{hi ? "शेड्यूल्ड सेशन स्वीकार करें" : "Accept scheduled sessions"}</span>
         </label>
         <label className="flex items-center gap-2 text-sm text-slate-600">
-          Slot length
+          {hi ? "स्लॉट की अवधि" : "Slot length"}
           <select value={s.slotMinutes} onChange={(e) => update({ slotMinutes: Number(e.target.value) as WeeklySchedule["slotMinutes"] })} className="rounded-lg border border-brand-border px-2 py-1.5 text-sm">
             {[15, 30, 45, 60].map((m) => (
               <option key={m} value={m}>
-                {m} min
+                {hi ? `${m} मिनट` : `${m} min`}
               </option>
             ))}
           </select>
         </label>
-        <span className="text-xs text-slate-500">Times are in IST.</span>
+        <span className="text-xs text-slate-500">{hi ? "समय IST में हैं।" : "Times are in IST."}</span>
       </div>
 
       <div className="divide-y divide-brand-border rounded-2xl border border-brand-border">
-        {DAYS.map((label, day) => {
+        {(hi ? DAYS_HI : DAYS).map((label, day) => {
           const windows = s.days.map((w, i) => ({ ...w, i })).filter((w) => w.day === day);
           return (
             <div key={day} className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-start">
               <span className="w-12 pt-1.5 text-sm font-bold text-brand-indigo">{label}</span>
               <div className="flex-1 space-y-2">
-                {windows.length === 0 && <p className="pt-1.5 text-sm text-slate-400">Unavailable</p>}
+                {windows.length === 0 && <p className="pt-1.5 text-sm text-slate-400">{hi ? "अनुपलब्ध" : "Unavailable"}</p>}
                 {windows.map((w) => (
                   <div key={w.i} className="flex flex-wrap items-center gap-2">
                     <input type="time" step={900} value={w.start} onChange={(e) => setWindow(w.i, { start: e.target.value })} className={input} aria-label={`${label} start`} />
-                    <span className="text-slate-400">to</span>
+                    <span className="text-slate-400">{hi ? "से" : "to"}</span>
                     <input type="time" step={900} value={w.end} onChange={(e) => setWindow(w.i, { end: e.target.value })} className={input} aria-label={`${label} end`} />
-                    <button type="button" onClick={() => update({ days: s.days.filter((_, j) => j !== w.i) })} aria-label="Remove hours" className="rounded-full p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600">
+                    <button type="button" onClick={() => update({ days: s.days.filter((_, j) => j !== w.i) })} aria-label={hi ? "घंटे हटाएं" : "Remove hours"} className="rounded-full p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600">
                       <i className="fa-solid fa-trash-can text-xs" aria-hidden />
                     </button>
                   </div>
@@ -121,11 +132,11 @@ export function ScheduleEditor() {
               </div>
               <div className="flex gap-3 text-xs font-semibold">
                 <button type="button" onClick={() => addWindow(day)} className="text-brand-saffron hover:underline">
-                  + Add hours
+                  {hi ? "+ घंटे जोड़ें" : "+ Add hours"}
                 </button>
                 {windows.length > 0 && day >= 1 && day <= 6 && (
                   <button type="button" onClick={() => copyToWeekdays(day)} className="text-slate-500 hover:text-brand-indigo hover:underline">
-                    Copy to Mon–Sat
+                    {hi ? "सोम–शनि में कॉपी करें" : "Copy to Mon–Sat"}
                   </button>
                 )}
               </div>
@@ -135,8 +146,8 @@ export function ScheduleEditor() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Btn onClick={save} busy={saving} busyText="Saving…" icon="fa-floppy-disk" className="btn-primary">
-          Save schedule
+        <Btn onClick={save} busy={saving} busyText={hi ? "सेव हो रहा है…" : "Saving…"} icon="fa-floppy-disk" className="btn-primary">
+          {hi ? "शेड्यूल सेव करें" : "Save schedule"}
         </Btn>
         {msg && !msg.ok && <p className="text-sm text-red-600">{msg.text}</p>}
       </div>

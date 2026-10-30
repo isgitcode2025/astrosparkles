@@ -129,7 +129,7 @@ export function BookSession({ astrologerId, slug, name, lang = "en" }: { astrolo
                 <div>
                   <p className="font-heading text-lg font-bold text-brand-indigo">{hi ? "सत्र बुक हो गया" : "Session booked"}</p>
                   <p className="mt-1 text-sm text-stone-600">
-                    {fmtSlotDate(done.start, tz)}, {fmtSlotTime(done.start, tz)} – {fmtSlotTime(done.end, tz)} · ₹{done.amount} {hi ? "भुगतान किया गया" : "paid"}
+                    {fmtSlotDate(done.start, tz, lang)}, {fmtSlotTime(done.start, tz, lang)} – {fmtSlotTime(done.end, tz, lang)} · ₹{done.amount} {hi ? "भुगतान किया गया" : "paid"}
                   </p>
                   <p className="mt-2 text-xs text-stone-500">
                     {hi
@@ -210,7 +210,7 @@ export function BookSession({ astrologerId, slug, name, lang = "en" }: { astrolo
                                     : "cursor-not-allowed border-stone-100 bg-stone-50 text-stone-300 line-through"
                               }`}
                             >
-                              {fmtSlotTime(s.start, tz)}
+                              {fmtSlotTime(s.start, tz, lang)}
                             </button>
                           ))}
                         </div>
@@ -246,7 +246,7 @@ export function BookSession({ astrologerId, slug, name, lang = "en" }: { astrolo
                       <div className="text-sm">
                         {pick ? (
                           <span className="font-semibold text-brand-indigo">
-                            {fmtSlotDate(pick, tz)}, {fmtSlotTime(pick, tz)}
+                            {fmtSlotDate(pick, tz, lang)}, {fmtSlotTime(pick, tz, lang)}
                           </span>
                         ) : (
                           <span className="text-stone-500">{hi ? "समय चुनें" : "Pick a time"}</span>

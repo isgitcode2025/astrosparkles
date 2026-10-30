@@ -1,6 +1,6 @@
 "use client";
 
-import { Link, useLocaleRouter } from "@/components/i18n";
+import { Link, useLang, useLocaleRouter } from "@/components/i18n";
 import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { api, ApiRequestError, session, TOKEN_KEY, type Me, type SignOutReason } from "@/lib/api";
@@ -21,10 +21,17 @@ const AuthContext = createContext<AuthState>({ status: "loading", me: null, refr
 export const useAuth = () => useContext(AuthContext);
 
 const FOCUS_RECHECK_MS = 15_000;
-const SIGNED_OUT_TEXT: Record<SignOutReason, string> = {
-  logout: "You have been logged out.",
-  expired: "Your session has ended. Please log in again.",
-  blocked: "This account is not active. Please contact support.",
+const SIGNED_OUT_TEXT: Record<"en" | "hi", Record<SignOutReason, string>> = {
+  en: {
+    logout: "You have been logged out.",
+    expired: "Your session has ended. Please log in again.",
+    blocked: "This account is not active. Please contact support.",
+  },
+  hi: {
+    logout: "आपको लॉग आउट कर दिया गया है।",
+    expired: "आपका सत्र समाप्त हो गया है। कृपया फिर से लॉग इन करें।",
+    blocked: "यह खाता सक्रिय नहीं है। कृपया सहायता टीम से संपर्क करें।",
+  },
 };
 
 /**
@@ -33,6 +40,7 @@ const SIGNED_OUT_TEXT: Record<SignOutReason, string> = {
  * in this tab and in the user's other open tabs.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const lang = useLang();
   const [status, setStatus] = useState<Status>("loading");
   const [me, setMe] = useState<Me | null>(null);
   const lastCheck = useRef(0);
@@ -74,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         refresh();
       } else {
         signedOut();
-        if (d?.reason) (d.reason === "logout" ? toast.info : toast.error)(SIGNED_OUT_TEXT[d.reason]);
+        if (d?.reason) (d.reason === "logout" ? toast.info : toast.error)(SIGNED_OUT_TEXT[lang][d.reason]);
       }
     };
     // another tab logged in or out
@@ -82,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (e.key !== TOKEN_KEY && e.key !== null) return;
       if (!session.get()) {
         signedOut();
-        toast.info("You were logged out in another tab.");
+        toast.info(lang === "hi" ? "आपको किसी अन्य टैब में लॉग आउट कर दिया गया है।" : "You were logged out in another tab.");
       } else {
         setStatus("loading");
         refresh();
@@ -113,7 +121,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("kj-wallet", onWallet);
       window.removeEventListener("kj-forbidden", onForbidden);
     };
-  }, [refresh, signedOut]);
+  }, [refresh, signedOut, lang]);
 
   return <AuthContext.Provider value={{ status, me, refresh, logout }}>{children}</AuthContext.Provider>;
 }
@@ -133,8 +141,8 @@ export function RequireAuth({
   children,
   skeleton,
   roles,
-  deniedTitle = "You don't have access to this page",
-  deniedText = "Your account doesn't have permission to open this page.",
+  deniedTitle,
+  deniedText,
 }: {
   children: ReactNode;
   skeleton: ReactNode;
@@ -142,9 +150,12 @@ export function RequireAuth({
   deniedTitle?: string;
   deniedText?: string;
 }) {
+  const lang = useLang();
   const { status, me, refresh } = useAuth();
   const router = useLocaleRouter();
   const loginHref = useLoginHref();
+  const resolvedDeniedTitle = deniedTitle ?? (lang === "hi" ? "आपको इस पेज तक पहुंच नहीं है" : "You don't have access to this page");
+  const resolvedDeniedText = deniedText ?? (lang === "hi" ? "आपके खाते को यह पेज खोलने की अनुमति नहीं है।" : "Your account doesn't have permission to open this page.");
 
   useEffect(() => {
     if (status !== "guest") return;
@@ -161,7 +172,7 @@ export function RequireAuth({
   if (status === "error" || !me)
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
-        <ErrorState title="Could not check your account" onRetry={refresh} />
+        <ErrorState title={lang === "hi" ? "आपका खाता जांचा नहीं जा सका" : "Could not check your account"} onRetry={refresh} lang={lang} />
       </div>
     );
   if (roles && !roles.some((r) => me.roles.includes(r)))
@@ -171,10 +182,10 @@ export function RequireAuth({
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-cream text-xl text-brand-saffron">
             <i className="fa-solid fa-lock" aria-hidden />
           </div>
-          <p className="font-heading text-lg font-bold text-brand-indigo">{deniedTitle}</p>
-          <p className="mt-1 text-sm text-slate-600">{deniedText}</p>
+          <p className="font-heading text-lg font-bold text-brand-indigo">{resolvedDeniedTitle}</p>
+          <p className="mt-1 text-sm text-slate-600">{resolvedDeniedText}</p>
           <Link href="/" className="mt-4 inline-block text-sm font-semibold text-brand-saffron hover:underline">
-            Back to the home page
+            {lang === "hi" ? "होम पेज पर वापस जाएं" : "Back to the home page"}
           </Link>
         </div>
       </div>

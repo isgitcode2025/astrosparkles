@@ -128,7 +128,7 @@ export function Header({ brand }: { brand: Brand }) {
             className="flex items-center gap-1.5 text-xs font-medium text-[#494550] transition-colors hover:text-brand-text"
           >
             <i className="fa-solid fa-headset text-[#8b5000]" aria-hidden />
-            <span className="hidden sm:inline">Help &amp; Support</span>
+            <span className="hidden sm:inline">{lang === "hi" ? "सहायता" : "Help & Support"}</span>
           </a>
         </div>
       </header>

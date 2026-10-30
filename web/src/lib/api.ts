@@ -1,4 +1,5 @@
 import { API_URL } from "./brand";
+import type { Lang } from "./i18n";
 
 export type ApiError = { code: string; message: string };
 type Envelope<T> = { success: true; data: T } | { success: false; error: ApiError };
@@ -290,7 +291,7 @@ export type WeeklySchedule = {
   days: { day: number; start: string; end: string }[];
 };
 
-export const fmtSlotTime = (iso: string, tz = "Asia/Kolkata") =>
-  new Date(iso).toLocaleTimeString("en-IN", { timeZone: tz, hour: "numeric", minute: "2-digit" });
-export const fmtSlotDate = (iso: string, tz = "Asia/Kolkata") =>
-  new Date(iso).toLocaleDateString("en-IN", { timeZone: tz, weekday: "short", day: "numeric", month: "short" });
+export const fmtSlotTime = (iso: string, tz = "Asia/Kolkata", lang: Lang = "en") =>
+  new Date(iso).toLocaleTimeString(lang === "hi" ? "hi-IN" : "en-IN", { timeZone: tz, hour: "numeric", minute: "2-digit" });
+export const fmtSlotDate = (iso: string, tz = "Asia/Kolkata", lang: Lang = "en") =>
+  new Date(iso).toLocaleDateString(lang === "hi" ? "hi-IN" : "en-IN", { timeZone: tz, weekday: "short", day: "numeric", month: "short" });

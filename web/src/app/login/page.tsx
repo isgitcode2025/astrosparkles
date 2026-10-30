@@ -161,7 +161,7 @@ function LoginForm() {
     if (status === "ready" && otp.step === "phone") router.replace(next);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
-  const otp = useOtp();
+  const otp = useOtp(lang);
   const [brand, setBrand] = useState<Brand>(defaultBrand);
   const [google, setGoogle] = useState(false);
   useEffect(() => {
@@ -274,6 +274,7 @@ function LoginForm() {
                 onDone={done}
                 text="signin_with"
                 onAvailable={setGoogle}
+                lang={lang}
               />
 
               <p className="mt-5 text-center text-sm leading-relaxed text-[#7b7581]">

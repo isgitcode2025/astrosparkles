@@ -19,12 +19,14 @@ export function ProductImage({ p, className = "" }: { p: Pick<ProductCard, "imag
   );
 }
 
-export function Price({ price, mrp, discountPercent }: { price: number; mrp: number | null; discountPercent: number }) {
+export function Price({ price, mrp, discountPercent, lang = "en" }: { price: number; mrp: number | null; discountPercent: number; lang?: Lang }) {
   return (
     <span className="flex items-baseline gap-2">
       <span className="font-heading text-lg font-extrabold text-brand-indigo">₹{price.toLocaleString("en-IN")}</span>
       {mrp && <span className="text-sm text-slate-400 line-through">₹{mrp.toLocaleString("en-IN")}</span>}
-      {discountPercent > 0 && <span className="text-xs font-semibold text-emerald-700">{discountPercent}% off</span>}
+      {discountPercent > 0 && (
+        <span className="text-xs font-semibold text-emerald-700">{lang === "hi" ? `${discountPercent}% की छूट` : `${discountPercent}% off`}</span>
+      )}
     </span>
   );
 }
@@ -48,7 +50,7 @@ export function ProductCardView({ p, lang = "en" }: { p: ProductCard; lang?: Lan
             : `${p.lessonCount} ${lang === "hi" ? "पाठ" : "lessons"}${p.language ? ` · ${p.language}` : ""}${p.level ? ` · ${p.level}` : ""}`}
         </p>
         <div className="mt-auto flex items-center justify-between pt-3">
-          <Price price={p.price} mrp={p.mrp} discountPercent={p.discountPercent} />
+          <Price price={p.price} mrp={p.mrp} discountPercent={p.discountPercent} lang={lang} />
           <span className="rounded-full bg-brand-saffron px-4 py-1.5 text-xs font-bold text-white transition-colors group-hover:bg-brand-saffronHover">
             {p.type === "pooja" ? (lang === "hi" ? "पूजा बुक करें" : "Book pooja") : lang === "hi" ? "कोर्स देखें" : "View course"}
           </span>

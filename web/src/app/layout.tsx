@@ -32,12 +32,17 @@ import { localePath, splitLang } from "@/lib/i18n";
 
 export async function generateMetadata(): Promise<Metadata> {
   const brand = await getBrand();
+  const lang = serverLang();
   const { path } = splitLang(headers().get("x-pathname") ?? "/");
   const raw = (process.env.NEXT_PUBLIC_SITE_URL ?? "").trim();
   const site = raw.endsWith("/") ? raw.slice(0, -1) : raw;
+  const description =
+    lang === "hi"
+      ? `${brand.name}: चैट या कॉल से सत्यापित ज्योतिषियों से बात करें, मुफ़्त कुंडली, कुंडली मिलान, दैनिक राशिफल और पंचांग।`
+      : `${brand.name}: talk to verified astrologers by chat or call, free kundli, kundli matching, daily horoscope and panchang.`;
   return {
     title: { default: `${brand.name} – ${brand.tagline}`, template: `%s | ${brand.name}` },
-    description: `${brand.name}: talk to verified astrologers by chat or call, free kundli, kundli matching, daily horoscope and panchang.`,
+    description,
     metadataBase: site ? new URL(site) : undefined,
     // tells search engines the two language versions of this page are the same content
     alternates: { languages: { en: `${site}${localePath("en", path)}`, hi: `${site}${localePath("hi", path)}` } },

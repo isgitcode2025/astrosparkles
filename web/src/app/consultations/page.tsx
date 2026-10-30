@@ -22,7 +22,7 @@ function MyConsultations() {
       />
       <AccountTabs lang={lang} />
       {error ? (
-        <ErrorState compact onRetry={reload} />
+        <ErrorState compact onRetry={reload} lang={lang} />
       ) : !items ? (
         <SkelRows rows={4} />
       ) : items.length === 0 ? (

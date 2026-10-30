@@ -6,12 +6,18 @@ import { getBrand } from "@/lib/brand";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { pageLang } from "@/lib/server-lang";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams: Search }): Promise<Metadata> {
   const brand = await getBrand();
-  return {
-    title: "Talk to Astrologers Online",
-    description: `Chat or call verified Vedic astrologers, tarot readers and numerologists on ${brand.name}. Filter by concern, language and price.`,
-  };
+  const lang = pageLang(searchParams.lang);
+  return lang === "hi"
+    ? {
+        title: "ऑनलाइन ज्योतिषियों से बात करें",
+        description: `${brand.name} पर सत्यापित वैदिक ज्योतिषियों, टैरो रीडर्स और अंकशास्त्रियों से चैट या कॉल करें। समस्या, भाषा और कीमत के अनुसार फ़िल्टर करें।`,
+      }
+    : {
+        title: "Talk to Astrologers Online",
+        description: `Chat or call verified Vedic astrologers, tarot readers and numerologists on ${brand.name}. Filter by concern, language and price.`,
+      };
 }
 export const dynamic = "force-dynamic";
 

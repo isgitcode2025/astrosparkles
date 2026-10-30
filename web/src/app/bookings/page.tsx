@@ -45,6 +45,7 @@ function MyBookings() {
       title: lang === "hi" ? `${b.astrologerName} के साथ अपना सेशन रद्द करें?` : `Cancel your session with ${b.astrologerName}?`,
       text: lang === "hi" ? `₹${b.amount} आपके वॉलेट में वापस कर दिए जाएंगे।` : `₹${b.amount} will be refunded to your wallet.`,
       confirmText: lang === "hi" ? "सेशन रद्द करें" : "Cancel session",
+      cancelText: lang === "hi" ? "रहने दें" : "Keep it",
       danger: true,
     });
     if (!ok) return;
@@ -88,7 +89,7 @@ function MyBookings() {
       </div>
 
       {error ? (
-        <ErrorState compact onRetry={load} />
+        <ErrorState compact onRetry={load} lang={lang} />
       ) : !items ? (
         <SkelRows rows={3} />
       ) : items.length === 0 ? (
@@ -119,7 +120,7 @@ function MyBookings() {
                     <StatusPill status={b.status} lang={lang} />
                   </div>
                   <p className="text-sm text-slate-600">
-                    {fmtSlotTime(b.start)} – {fmtSlotTime(b.end)} IST · {lang === "hi" ? "चैट" : "Chat"} · {b.minutes} {lang === "hi" ? "मिनट" : "min"} · ₹{b.amount}
+                    {fmtSlotTime(b.start, undefined, lang)} – {fmtSlotTime(b.end, undefined, lang)} IST · {lang === "hi" ? "चैट" : "Chat"} · {b.minutes} {lang === "hi" ? "मिनट" : "min"} · ₹{b.amount}
                   </p>
                   {b.topic && <p className="mt-1 text-sm italic text-slate-500">“{b.topic}”</p>}
                   {b.refunded > 0 && (

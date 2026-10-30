@@ -182,7 +182,7 @@ function Wallet() {
   if (loadError)
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
-        <ErrorState title={lang === "hi" ? "आपका वॉलेट लोड नहीं हो सका" : "Could not load your wallet"} onRetry={load} />
+        <ErrorState title={lang === "hi" ? "आपका वॉलेट लोड नहीं हो सका" : "Could not load your wallet"} onRetry={load} lang={lang} />
       </div>
     );
   if (!settings || balance === null) return <WalletSkeleton />;

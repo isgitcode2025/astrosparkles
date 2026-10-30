@@ -151,7 +151,11 @@ export default async function SignPage({ params, searchParams }: { params: { sig
                   .filter((k) => r.scores?.[k])
                   .map((k) => (
                     <div key={k} className="flex items-center justify-between">
-                      <span className="font-semibold capitalize text-brand-indigo">{k}</span>
+                      <span className="font-semibold capitalize text-brand-indigo">
+                        {hi
+                          ? { love: "प्रेम", career: "करियर", money: "धन", health: "स्वास्थ्य" }[k]
+                          : k}
+                      </span>
                       <span className="text-brand-saffron">
                         {"★".repeat(r.scores?.[k] ?? 0)}
                         <span className="text-slate-200">{"★".repeat(5 - (r.scores?.[k] ?? 0))}</span>

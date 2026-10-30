@@ -22,11 +22,14 @@ async function load(slug: string) {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const lang = serverLang();
   try {
     const a = await load(params.slug);
-    return { title: `${a.displayName} – ${a.experienceYears} yrs astrologer`, description: a.bioEn.slice(0, 155) };
+    const title = lang === "hi" ? `${a.displayName} – ${a.experienceYears} वर्ष अनुभव वाले ज्योतिषी` : `${a.displayName} – ${a.experienceYears} yrs astrologer`;
+    const description = (lang === "hi" ? a.bioHi || a.bioEn : a.bioEn).slice(0, 155);
+    return { title, description };
   } catch {
-    return { title: "Astrologer" };
+    return { title: lang === "hi" ? "ज्योतिषी" : "Astrologer" };
   }
 }
 

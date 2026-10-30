@@ -195,14 +195,14 @@ function ConsultationRoom() {
   if (error && !c) {
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
-        <ErrorState title={lang === "hi" ? "यह परामर्श खोला नहीं जा सका" : "Could not open this consultation"} text={error} onRetry={() => setAttempt((a) => a + 1)} />
+        <ErrorState title={lang === "hi" ? "यह परामर्श खोला नहीं जा सका" : "Could not open this consultation"} text={error} onRetry={() => setAttempt((a) => a + 1)} lang={lang} />
       </div>
     );
   }
   if (!c && slow)
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
-        <ErrorState title={lang === "hi" ? "जुड़ने में सामान्य से अधिक समय लग रहा है" : "Connecting is taking longer than usual"} onRetry={() => (setSlow(false), setAttempt((a) => a + 1))} />
+        <ErrorState title={lang === "hi" ? "जुड़ने में सामान्य से अधिक समय लग रहा है" : "Connecting is taking longer than usual"} onRetry={() => (setSlow(false), setAttempt((a) => a + 1))} lang={lang} />
       </div>
     );
   if (!c) return <ChatSkeleton />;

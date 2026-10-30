@@ -109,7 +109,7 @@ export default function PanchangPage() {
 
         {error && (
           <div className="mt-6">
-            <ErrorState compact title={hi ? "पंचांग लोड नहीं हो सका" : "Could not load the panchang"} text={error} onRetry={() => load(date, place)} />
+            <ErrorState compact title={hi ? "पंचांग लोड नहीं हो सका" : "Could not load the panchang"} text={error} onRetry={() => load(date, place)} lang={lang} />
           </div>
         )}
 

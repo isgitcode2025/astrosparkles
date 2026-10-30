@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { api, ApiRequestError, session, type Me } from "@/lib/api";
+import type { Lang } from "@/lib/i18n";
 
 export type VerifyResult = { accessToken: string; isNewUser: boolean; user: Me };
 
 /** Mobile OTP flow shared by login and sign-up: send, resend countdown, verify. */
-export function useOtp() {
+export function useOtp(lang: Lang = "en") {
   const [step, setStep] = useState<"phone" | "otp">("phone");
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
@@ -29,7 +30,7 @@ export function useOtp() {
       setCode("");
       setResendIn(r.resendAfterSeconds);
     } catch (e) {
-      setError(e instanceof ApiRequestError ? e.message : "Could not send OTP. Please try again.");
+      setError(e instanceof ApiRequestError ? e.message : lang === "hi" ? "ओटीपी नहीं भेजा जा सका। कृपया फिर से प्रयास करें।" : "Could not send OTP. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -44,7 +45,7 @@ export function useOtp() {
       session.set(r.accessToken);
       return r;
     } catch (e) {
-      setError(e instanceof ApiRequestError ? e.message : "Could not verify the OTP");
+      setError(e instanceof ApiRequestError ? e.message : lang === "hi" ? "ओटीपी सत्यापित नहीं हो सका" : "Could not verify the OTP");
       return null;
     } finally {
       setBusy(false);

@@ -167,6 +167,7 @@ function AstroDashboard() {
         title: lang === "hi" ? `${b.userName} के साथ सेशन रद्द करें?` : `Cancel the session with ${b.userName}?`,
         text: lang === "hi" ? `उन्हें ₹${b.amount} का पूरा रिफंड मिलेगा।` : `They get a full refund of ₹${b.amount}.`,
         confirmText: lang === "hi" ? "सेशन रद्द करें" : "Cancel session",
+        cancelText: lang === "hi" ? "रहने दें" : "Keep it",
         danger: true,
       }))
     )
@@ -201,7 +202,7 @@ function AstroDashboard() {
   if (error && !profile)
     return (
       <div className="mx-auto max-w-xl px-4 py-16">
-        <ErrorState title={lang === "hi" ? "डैशबोर्ड लोड नहीं हो सका" : "Could not load the dashboard"} onRetry={load} />
+        <ErrorState title={lang === "hi" ? "डैशबोर्ड लोड नहीं हो सका" : "Could not load the dashboard"} onRetry={load} lang={lang} />
       </div>
     );
   if (!profile) return <DashboardSkeleton />;
@@ -427,7 +428,7 @@ function AstroDashboard() {
                     <li key={b.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                       <div className="text-sm">
                         <p className="font-semibold text-brand-indigo">
-                          {fmtSlotDate(b.start)}, {fmtSlotTime(b.start)} · {b.userName}
+                          {fmtSlotDate(b.start, undefined, lang)}, {fmtSlotTime(b.start, undefined, lang)} · {b.userName}
                         </p>
                         <p className="text-slate-500">
                           {b.minutes} {lang === "hi" ? "मिनट" : "min"} · {lang === "hi" ? `आप ₹${b.astrologerEarning} कमाते हैं` : `you earn ₹${b.astrologerEarning}`}
@@ -481,7 +482,7 @@ function AstroDashboard() {
               ? "यूज़र्स एक स्लॉट बुक करते हैं और आपकी चैट दर पर पूरा भुगतान पहले से करते हैं। शुरुआत के समय अवलोकन टैब से जुड़ें। अगर आप रद्द करते हैं, तो यूज़र को पूरा रिफंड मिलता है।"
               : "Users book a slot and pay the full price up front at your chat rate. Join from the Overview tab at the start time. If you cancel, the user is refunded in full."}
           </p>
-          <ScheduleEditor />
+          <ScheduleEditor lang={lang} />
         </section>
       )}
 

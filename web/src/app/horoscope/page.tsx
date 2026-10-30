@@ -85,7 +85,7 @@ export default async function HoroscopePage({ searchParams }: { searchParams: { 
       </ToolHero>
       <div className="container-site relative -mt-14 space-y-10 pb-16">
         {!data ? (
-          <ErrorState title="The horoscope could not be loaded" />
+          <ErrorState title={hi ? "राशिफल लोड नहीं हो सका" : "The horoscope could not be loaded"} lang={lang} />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {data.items.map((i) => (

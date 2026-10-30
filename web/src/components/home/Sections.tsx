@@ -107,7 +107,7 @@ export function TopAstrologers({ c, items, master, lang }: { c: HomeCopy; items:
                     <Sparkle className="absolute right-[-7px] top-[163px] text-fig-ink" />
                     <span
                       className={`absolute bottom-3 left-3 h-3 w-3 rounded-full border-2 border-white ${a.presence === "online" ? "bg-emerald-500" : a.presence === "busy" ? "bg-amber-500" : "bg-gray-400"}`}
-                      title={a.presence}
+                      title={a.presence === "busy" ? c.top.busy : a.presence === "offline" ? c.top.offline : c.stats.online}
                     />
                   </div>
                   {/* details */}

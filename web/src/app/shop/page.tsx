@@ -6,10 +6,18 @@ import { api, type ProductCard } from "@/lib/api";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { pageLang } from "@/lib/server-lang";
 
-export const metadata: Metadata = {
-  title: "Online Poojas & Astrology Courses",
-  description: "Book poojas performed in your name by verified purohits, and learn Vedic astrology and numerology online.",
-};
+export async function generateMetadata({ searchParams }: { searchParams: { lang?: string } }): Promise<Metadata> {
+  const lang = pageLang(searchParams.lang);
+  return lang === "hi"
+    ? {
+        title: "ऑनलाइन पूजा और ज्योतिष कोर्स",
+        description: "सत्यापित पुरोहितों द्वारा आपके नाम पर की जाने वाली पूजा बुक करें, और ऑनलाइन वैदिक ज्योतिष व अंकशास्त्र सीखें।",
+      }
+    : {
+        title: "Online Poojas & Astrology Courses",
+        description: "Book poojas performed in your name by verified purohits, and learn Vedic astrology and numerology online.",
+      };
+}
 export const dynamic = "force-dynamic";
 
 const tabs = {

@@ -101,7 +101,7 @@ export function BuyBox({ p, lang = "en" }: { p: ProductDetail; lang?: Lang }) {
 
   return (
     <div className="card space-y-4 border-t-4 border-t-brand-saffron">
-      <Price price={p.price} mrp={p.mrp} discountPercent={p.discountPercent} />
+      <Price price={p.price} mrp={p.mrp} discountPercent={p.discountPercent} lang={lang} />
       <p className="text-xs text-slate-400">{lang === "hi" ? "कीमत में GST शामिल है। आपके वॉलेट से भुगतान होगा।" : "Price includes GST. Paid from your wallet."}</p>
 
       {p.type === "course" && enrolled ? (

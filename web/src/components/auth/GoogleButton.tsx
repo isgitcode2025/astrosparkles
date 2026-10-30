@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { api, ApiRequestError, session } from "@/lib/api";
 import type { VerifyResult } from "./useOtp";
+import type { Lang } from "@/lib/i18n";
 
 type GoogleId = {
   accounts: {
@@ -17,7 +18,17 @@ type GoogleId = {
  * Google sign-in with Google Identity Services. Shown only when the API exposes a web client id
  * (first id in GOOGLE_CLIENT_IDS). Returns nothing otherwise, so the divider can be hidden too.
  */
-export function GoogleButton({ onDone, text = "continue_with", onAvailable }: { onDone: (r: VerifyResult) => void; text?: "signin_with" | "signup_with" | "continue_with"; onAvailable?: (ok: boolean) => void }) {
+export function GoogleButton({
+  onDone,
+  text = "continue_with",
+  onAvailable,
+  lang = "en",
+}: {
+  onDone: (r: VerifyResult) => void;
+  text?: "signin_with" | "signup_with" | "continue_with";
+  onAvailable?: (ok: boolean) => void;
+  lang?: Lang;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [clientId, setClientId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +60,7 @@ export function GoogleButton({ onDone, text = "continue_with", onAvailable }: { 
             session.set(r.accessToken);
             onDone(r);
           } catch (e) {
-            setError(e instanceof ApiRequestError ? e.message : "Google sign-in failed");
+            setError(e instanceof ApiRequestError ? e.message : lang === "hi" ? "गूगल साइन-इन विफल रहा" : "Google sign-in failed");
           }
         },
       });
@@ -61,7 +72,7 @@ export function GoogleButton({ onDone, text = "continue_with", onAvailable }: { 
     s.async = true;
     s.onload = render;
     document.head.appendChild(s);
-  }, [clientId, onDone, text]);
+  }, [clientId, onDone, text, lang]);
 
   if (!clientId) return null;
   return (

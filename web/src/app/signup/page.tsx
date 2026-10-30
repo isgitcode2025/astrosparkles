@@ -119,7 +119,7 @@ function SignupForm() {
     if (status === "ready" && otp.step === "phone") router.replace(next);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
-  const otp = useOtp();
+  const otp = useOtp(lang);
   const [brand, setBrand] = useState<Brand>(defaultBrand);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -307,6 +307,7 @@ function SignupForm() {
                 onDone={googleDone}
                 text="signup_with"
                 onAvailable={setGoogle}
+                lang={lang}
               />
 
               <p className="mt-4 text-center text-[11px] leading-relaxed text-[#7b7581]">

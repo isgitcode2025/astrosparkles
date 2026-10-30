@@ -151,7 +151,7 @@ function Newsletter({ lang }: { lang: Lang }) {
   );
 }
 
-function StoreButton({ href, icon, small, big }: { href: string; icon: string; small: string; big: string }) {
+function StoreButton({ href, icon, small, big, soon }: { href: string; icon: string; small: string; big: string; soon: string }) {
   const inner = (
     <>
       <i className={`fa-brands ${icon} text-[22px]`} aria-hidden />
@@ -167,7 +167,7 @@ function StoreButton({ href, icon, small, big }: { href: string; icon: string; s
       {inner}
     </a>
   ) : (
-    <span className={`${cls} cursor-default`} title="Coming soon">
+    <span className={`${cls} cursor-default`} title={soon}>
       {inner}
     </span>
   );
@@ -186,17 +186,17 @@ export function Footer({ brand }: { brand: Brand }) {
         <div className="container-site flex flex-col items-center justify-between gap-2 text-xs text-[#494550] sm:flex-row">
           <div className="flex items-center gap-1.5">
             <i className="fa-solid fa-user-shield text-[#8b5000]" aria-hidden />
-            <span>Private &amp; confidential consultations</span>
+            <span>{lang === "hi" ? "निजी और गोपनीय परामर्श" : "Private & confidential consultations"}</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-[#7b7581]">
               © {new Date().getFullYear()} {brand.name}
             </span>
             <Link href="/privacy-policy" className="transition-colors hover:text-brand-dark">
-              Privacy Policy
+              {lang === "hi" ? "गोपनीयता नीति" : "Privacy Policy"}
             </Link>
             <Link href="/terms" className="transition-colors hover:text-brand-dark">
-              Terms of Service
+              {lang === "hi" ? "नियम और शर्तें" : "Terms of Service"}
             </Link>
           </div>
         </div>
@@ -248,8 +248,8 @@ export function Footer({ brand }: { brand: Brand }) {
             <div className="flex flex-col gap-3">
               <p className="font-ui text-xs font-medium uppercase text-brand-saffron">{c.app(brand.name)}</p>
               <div className="flex flex-wrap gap-2">
-                <StoreButton href={brand.appLinks?.ios ?? ""} icon="fa-apple" small={c.downloadOn} big="App Store" />
-                <StoreButton href={brand.appLinks?.android ?? ""} icon="fa-google-play" small={c.getOn} big="Google Play" />
+                <StoreButton href={brand.appLinks?.ios ?? ""} icon="fa-apple" small={c.downloadOn} big="App Store" soon={c.soon} />
+                <StoreButton href={brand.appLinks?.android ?? ""} icon="fa-google-play" small={c.getOn} big="Google Play" soon={c.soon} />
               </div>
             </div>
           </div>
