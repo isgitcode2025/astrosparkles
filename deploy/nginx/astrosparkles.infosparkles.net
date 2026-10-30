@@ -1,0 +1,23 @@
+# /etc/nginx/sites-available/astrosparkles.infosparkles.net
+# Front-end (Next.js container on 127.0.0.1:9300).
+# Port 80 only - run certbot --nginx afterwards and it adds the 443 block.
+server {
+    listen 80;
+    listen [::]:80;
+    server_name astrosparkles.infosparkles.net;
+
+    client_max_body_size 25m;
+
+    location / {
+        proxy_pass http://127.0.0.1:9300;
+        proxy_http_version 1.1;
+        proxy_set_header Host              $host;
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Next.js dev/HMR and streaming responses need the upgrade pair
+        proxy_set_header Upgrade           $http_upgrade;
+        proxy_set_header Connection        "upgrade";
+        proxy_read_timeout 300s;
+    }
+}

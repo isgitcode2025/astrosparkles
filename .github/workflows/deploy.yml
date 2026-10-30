@@ -1,0 +1,100 @@
+name: CI/CD
+
+# Pushing to dev: build+lint both apps, then (only if that passes) deploy to
+# the VPS. Pull requests and pushes to any other branch only run the checks.
+#
+# This workflow NEVER touches api/.env or anything else on the server beyond
+# the app code itself — secrets are created and edited by hand on the VPS,
+# not by CI/CD.
+on:
+  push:
+    branches: [dev]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    name: API · build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fd072c5 # v4.1.0
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: api/package-lock.json
+
+      - run: npm ci
+      - run: npm run build
+      # api/ci:lint is not run here yet: the codebase has pre-existing
+      # formatting/lint debt (from before this pipeline existed) that needs
+      # a one-time `npm run lint` + commit before it can gate CI. Until then,
+      # the build (real type-check) is the gate.
+
+  web:
+    name: Web · lint, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      # Build-time only, used by web's Next.js build. Harmless placeholder —
+      # the real value is already baked into the image running on the VPS.
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fd072c5 # v4.1.0
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+      - run: npm run ci:lint
+      - run: npm run build
+
+  deploy:
+    name: Deploy to VPS
+    needs: [api, web]
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: SSH in, pull dev, rebuild containers
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
+        with:
+          host: ${{ secrets.DEPLOY_SSH_HOST }}
+          port: ${{ secrets.DEPLOY_SSH_PORT || 22 }}
+          username: ${{ secrets.DEPLOY_SSH_USER }}
+          password: ${{ secrets.DEPLOY_SSH_PASSWORD }}
+          command_timeout: 10m
+          script: |
+            set -euo pipefail
+            cd /projects/astrosparkles.infosparkles.net
+
+            # Pull code only. api/.env already lives here and git never sees
+            # it (it's gitignored) — nothing here can overwrite your secrets.
+            git fetch origin dev
+            git reset --hard origin/dev
+
+            docker compose -f docker-compose.prod.yml up -d --build
+
+            echo "Waiting for the API to come up..."
+            for i in $(seq 1 15); do
+              curl -fsS http://127.0.0.1:9301/api/v1/health >/dev/null 2>&1 && { echo "API is up."; exit 0; }
+              sleep 3
+            done
+            echo "FATAL: API did not come up. Check: docker compose -f docker-compose.prod.yml logs --tail=100 api"
+            exit 1

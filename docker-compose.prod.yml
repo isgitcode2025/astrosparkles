@@ -1,0 +1,41 @@
+# Production stack for astrosparkles.infosparkles.net
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# MongoDB lives in Atlas (MONGO_URI in api/.env), so there is no mongo service here.
+# Host ports are bound to 127.0.0.1: only the host nginx can reach them.
+name: astrosparkles
+
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    # deliberately no ports: the host already runs its own redis on 6379.
+    # This one is reachable only as redis:6379 inside the astrosparkles network.
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.prod
+    restart: unless-stopped
+    env_file: ./api/.env
+    environment:
+      NODE_ENV: production
+      PORT: "4000"
+      REDIS_URL: redis://redis:6379
+    ports: ["127.0.0.1:9301:4000"]
+    depends_on: [redis]
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.prod
+      args:
+        NEXT_PUBLIC_API_URL: https://api.astrosparkles.infosparkles.net/api/v1
+        NEXT_PUBLIC_SITE_URL: https://astrosparkles.infosparkles.net
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_URL: http://api:4000/api/v1
+    ports: ["127.0.0.1:9300:3000"]
+    depends_on: [api]

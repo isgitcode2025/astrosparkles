@@ -1,0 +1,32 @@
+# Local development stack: docker compose up --build
+services:
+  mongo:
+    image: mongo:7
+    ports: ["27017:27017"]
+    volumes: [mongo-data:/data/db]
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+  api:
+    build: ./api
+    env_file: ./api/.env
+    environment:
+      MONGO_URI: mongodb://mongo:27017/kundlijano
+      REDIS_URL: redis://redis:6379
+      # Windows/macOS folders mounted into Docker do not send file-change events, so poll for edits
+      CHOKIDAR_USEPOLLING: "true"
+      TSC_WATCHFILE: DynamicPriorityPolling
+    ports: ["4000:4000"]
+    volumes: ["./api/src:/app/src", "./docs:/docs"]
+    depends_on: [mongo, redis]
+  web:
+    build: ./web
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1   # used by the browser
+      API_INTERNAL_URL: http://api:4000/api/v1            # used by the Next.js server inside Docker
+      WATCHPACK_POLLING: "true"                            # pick up edits made on Windows/macOS
+    ports: ["3000:3000"]
+    volumes: ["./web/src:/app/src", "./web/public:/app/public"]
+    depends_on: [api]
+volumes:
+  mongo-data:

@@ -1,0 +1,4311 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/config/brand": {
+      "get": {
+        "operationId": "BrandController_getBrand",
+        "summary": "White-label brand settings",
+        "description": "Public. Web and mobile apps load name, logo, colours, fonts, languages and support contacts from here.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "{ success: true, data: { name, tagline, logoUrl, colors, fonts, ... } }"
+          }
+        },
+        "tags": [
+          "Config"
+        ]
+      }
+    },
+    "/api/v1/config/public-keys": {
+      "get": {
+        "operationId": "BrandController_getPublicKeys",
+        "summary": "Public client keys",
+        "description": "Only keys that are safe to expose to apps (Razorpay key id, Agora app id, Google web client id). Secrets never leave the server.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Config"
+        ]
+      }
+    },
+    "/api/v1/config/master": {
+      "get": {
+        "operationId": "MasterController_master",
+        "summary": "Reference lists: expertise, concerns, languages, gifts (English + Hindi labels)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Config"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "HealthController_check",
+        "summary": "Service health check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "System"
+        ]
+      }
+    },
+    "/api/v1/calculators/numerology": {
+      "post": {
+        "operationId": "CalculatorsController_numerology",
+        "summary": "Life path, birthday, destiny, soul urge, personality and personal year numbers",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NumerologyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Calculators"
+        ]
+      }
+    },
+    "/api/v1/calculators/lo-shu-grid": {
+      "post": {
+        "operationId": "CalculatorsController_loShu",
+        "summary": "Lo Shu grid with driver and conductor numbers, missing and repeated numbers, complete planes",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoShuDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Calculators"
+        ]
+      }
+    },
+    "/api/v1/calculators/love": {
+      "post": {
+        "operationId": "CalculatorsController_love",
+        "summary": "Name-based love percentage (for entertainment)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Calculators"
+        ]
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "operationId": "UsersController_me",
+        "summary": "My profile, wallet balance and free-consultation status",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "summary": "Update my profile and birth details",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "UsersController_remove",
+        "summary": "Delete my account (required by Play Store / App Store policy)",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/otp/send": {
+      "post": {
+        "operationId": "AuthController_send",
+        "summary": "Send login OTP to a mobile number",
+        "description": "In development (OTP_PROVIDER=console) the code is 123456 and is also printed in the API log.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/otp/verify": {
+      "post": {
+        "operationId": "AuthController_verify",
+        "summary": "Verify OTP and log in (creates the account on first login)",
+        "description": "Returns accessToken. Send it as \"Authorization: Bearer <token>\" on protected endpoints.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/auth/google": {
+      "post": {
+        "operationId": "AuthController_google",
+        "summary": "Log in with a Google ID token (web, Android or iOS)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoogleLoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/v1/astrologers": {
+      "get": {
+        "operationId": "AstrologersController_list",
+        "summary": "List approved astrologers with filters, sorting and pagination (public)",
+        "parameters": [
+          {
+            "name": "expertise",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated expertise slugs",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "concern",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "love",
+                "marriage",
+                "career",
+                "business",
+                "health",
+                "education"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "languages",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated language codes",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "gender",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "male",
+                "female"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "onlineOnly",
+            "required": false,
+            "in": "query",
+            "description": "Only astrologers online right now",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "mode",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "chat",
+                "call",
+                "video"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search by name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "recommended",
+              "enum": [
+                "recommended",
+                "rating",
+                "experience",
+                "price-low",
+                "price-high"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ]
+      }
+    },
+    "/api/v1/astrologers/stats": {
+      "get": {
+        "operationId": "AstrologersController_stats",
+        "summary": "Live counts: total, online now, women, consultations, top experience, per concern and per language (public)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ]
+      }
+    },
+    "/api/v1/astrologers/me/profile": {
+      "get": {
+        "operationId": "AstrologersController_mine",
+        "summary": "My astrologer profile and application status",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/astrologers/apply": {
+      "post": {
+        "operationId": "AstrologersController_apply",
+        "summary": "Apply to join as an astrologer (any logged-in user). Goes to admin review.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyAstrologerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/astrologers/me/presence": {
+      "patch": {
+        "operationId": "AstrologersController_presence",
+        "summary": "Astrologer goes online or offline",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetPresenceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/astrologers/{id}/follow": {
+      "get": {
+        "operationId": "AstrologersController_followStatus",
+        "summary": "Whether I follow this astrologer, and the follower count",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AstrologersController_follow",
+        "summary": "Follow an astrologer (idempotent)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "AstrologersController_unfollow",
+        "summary": "Unfollow an astrologer (idempotent)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/astrologers/{slug}": {
+      "get": {
+        "operationId": "AstrologersController_bySlug",
+        "summary": "Public astrologer profile by slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Astrologers"
+        ]
+      }
+    },
+    "/api/v1/admin/astrologers/applications": {
+      "get": {
+        "operationId": "AdminAstrologersController_applications",
+        "summary": "Astrologer applications by status (default pending)",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "suspended"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/astrologers/{id}/review": {
+      "patch": {
+        "operationId": "AdminAstrologersController_review",
+        "summary": "Approve or reject an astrologer application",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/wallet/recharge-settings": {
+      "get": {
+        "operationId": "WalletController_settings",
+        "summary": "Recharge packs with bonus and GST, min/max amount, Razorpay key id (public)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/api/v1/wallet/quote": {
+      "get": {
+        "operationId": "WalletController_quote",
+        "summary": "Price breakdown for a custom recharge amount (public)",
+        "parameters": [
+          {
+            "name": "amount",
+            "required": true,
+            "in": "query",
+            "description": "Recharge amount in rupees (GST is added on top)",
+            "schema": {
+              "example": 500,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Wallet"
+        ]
+      }
+    },
+    "/api/v1/wallet/balance": {
+      "get": {
+        "operationId": "WalletController_balance",
+        "summary": "My wallet balance",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Wallet"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/wallet/transactions": {
+      "get": {
+        "operationId": "WalletController_transactions",
+        "summary": "My wallet transactions, newest first",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Wallet"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/wallet/create-order": {
+      "post": {
+        "operationId": "WalletController_createOrder",
+        "summary": "Step 1 of recharge: create a Razorpay order",
+        "description": "Open Razorpay Checkout with the returned orderId and razorpayKeyId. In mock mode skip Checkout and call verify-payment with signature \"mock\".",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRechargeOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Wallet"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/wallet/verify-payment": {
+      "post": {
+        "operationId": "WalletController_verify",
+        "summary": "Step 2 of recharge: verify the Checkout result and credit the wallet",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyPaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Wallet"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/wallet/payment-cancelled": {
+      "post": {
+        "operationId": "WalletController_cancel",
+        "summary": "Tell the server the user closed Checkout without paying",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelPaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Wallet"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/request": {
+      "post": {
+        "operationId": "ConsultationsController_request",
+        "summary": "User requests a chat or call with an online astrologer",
+        "description": "Checks wallet balance (or the free first chat). The astrologer gets a consultation:updated socket event and must accept within the timeout.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestConsultationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/reviews/recent": {
+      "get": {
+        "operationId": "ConsultationsController_recentReviews",
+        "summary": "Latest written reviews (4★ and above) for the home page (public)",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Consultations"
+        ]
+      }
+    },
+    "/api/v1/consultations/reviews/astrologer/{astrologerId}": {
+      "get": {
+        "operationId": "ConsultationsController_astrologerReviews",
+        "summary": "One astrologer's reviews with rating breakdown and consultations in the last 7 days (public)",
+        "parameters": [
+          {
+            "name": "astrologerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "description": "reviews = with a written comment, all = every rating, 5 = five-star only",
+            "schema": {
+              "default": "reviews",
+              "enum": [
+                "reviews",
+                "all",
+                "5"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 5,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Consultations"
+        ]
+      }
+    },
+    "/api/v1/consultations/active": {
+      "get": {
+        "operationId": "ConsultationsController_active",
+        "summary": "My current requested or active consultation (as user or astrologer), or null",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/my": {
+      "get": {
+        "operationId": "ConsultationsController_mine",
+        "summary": "My consultation history as a user",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/astrologer/incoming": {
+      "get": {
+        "operationId": "ConsultationsController_incoming",
+        "summary": "Astrologer: pending requests and the active session",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/astrologer/history": {
+      "get": {
+        "operationId": "ConsultationsController_astroHistory",
+        "summary": "Astrologer: consultation history",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/astrologer/earnings": {
+      "get": {
+        "operationId": "ConsultationsController_earnings",
+        "summary": "Astrologer: earnings today and all time (after platform commission)",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}": {
+      "get": {
+        "operationId": "ConsultationsController_get",
+        "summary": "One consultation (user or astrologer of that consultation)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/accept": {
+      "post": {
+        "operationId": "ConsultationsController_accept",
+        "summary": "Astrologer accepts a request; billing time starts now",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/reject": {
+      "post": {
+        "operationId": "ConsultationsController_reject",
+        "summary": "Astrologer declines a request",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/cancel": {
+      "post": {
+        "operationId": "ConsultationsController_cancel",
+        "summary": "User cancels a request before the astrologer accepts",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/end": {
+      "post": {
+        "operationId": "ConsultationsController_end",
+        "summary": "Either side ends an active consultation; the user is billed per started minute",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndConsultationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/messages": {
+      "get": {
+        "operationId": "ConsultationsController_messages",
+        "summary": "Chat history of a consultation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "ConsultationsController_send",
+        "summary": "Send a chat message (REST fallback; apps normally use the socket event message:send)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendMessageDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/review": {
+      "post": {
+        "operationId": "ConsultationsController_review",
+        "summary": "User rates the astrologer after the consultation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/review/reply": {
+      "post": {
+        "operationId": "ConsultationsController_reply",
+        "summary": "Astrologer replies to the review of their consultation (once, public)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewReplyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/consultations/{id}/call-token": {
+      "get": {
+        "operationId": "ConsultationsController_callToken",
+        "summary": "Agora token for call/video consultations (returns 503 until Agora is configured)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Consultations"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/astrologers/me/schedule": {
+      "get": {
+        "operationId": "BookingsController_getSchedule",
+        "summary": "My weekly hours for scheduled sessions (astrologer)",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "BookingsController_updateSchedule",
+        "summary": "Set weekly hours and slot length for scheduled sessions (astrologer)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScheduleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/astrologers/{id}/slots": {
+      "get": {
+        "operationId": "BookingsController_slots",
+        "summary": "Bookable chat slots for the next days, with price per slot (public). Times are UTC ISO strings.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": false,
+            "in": "query",
+            "description": "First day (YYYY-MM-DD, astrologer local date). Default today.",
+            "schema": {
+              "example": "2026-10-26",
+              "type": "string"
+            }
+          },
+          {
+            "name": "days",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 14,
+              "default": 7,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ]
+      }
+    },
+    "/api/v1/bookings": {
+      "post": {
+        "operationId": "BookingsController_create",
+        "summary": "Book a slot. The full price is taken from the wallet now and refunded if cancelled or not held.",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBookingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/bookings/my": {
+      "get": {
+        "operationId": "BookingsController_mine",
+        "summary": "My booked sessions (as a user)",
+        "parameters": [
+          {
+            "name": "scope",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "upcoming",
+              "enum": [
+                "upcoming",
+                "past",
+                "all"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/bookings/astrologer": {
+      "get": {
+        "operationId": "BookingsController_astrologer",
+        "summary": "Sessions booked with me (astrologer)",
+        "parameters": [
+          {
+            "name": "scope",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "upcoming",
+              "enum": [
+                "upcoming",
+                "past",
+                "all"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/bookings/{id}/cancel": {
+      "post": {
+        "operationId": "BookingsController_cancel",
+        "summary": "Cancel with a full refund. Users: up to 2 h before start. Astrologers: any time before it ends.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/bookings/{id}/start": {
+      "post": {
+        "operationId": "BookingsController_start",
+        "summary": "Open the prepaid chat (either side, from 5 min before start). Returns the consultation id; safe to call again.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Scheduled sessions"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/places/search": {
+      "get": {
+        "operationId": "PlacesController_search",
+        "summary": "Birth place autocomplete (city, coordinates, time zone). Public.",
+        "parameters": [
+          {
+            "name": "q",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "example": "Indo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Places"
+        ]
+      }
+    },
+    "/api/v1/places/{id}": {
+      "get": {
+        "operationId": "PlacesController_get",
+        "summary": "One place by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Places"
+        ]
+      }
+    },
+    "/api/v1/astro/kundli": {
+      "post": {
+        "operationId": "AstroController_kundli",
+        "summary": "Free kundli: summary, ascendant, 9 planets (sign, degree, house, nakshatra, D9 sign), Vimshottari dasha, Mangal dosha",
+        "description": "Apps draw the D1 chart from planets[].sign and the D9 chart from planets[].navamsaSign (ascendant.sign / ascendant.navamsaSign start the chart).",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KundliRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Astrology tools"
+        ]
+      }
+    },
+    "/api/v1/astro/kundli/pdf": {
+      "post": {
+        "operationId": "AstroController_kundliPdf",
+        "summary": "Download the kundli as a branded PDF (login required)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KundliRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Astrology tools"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/astro/matching": {
+      "post": {
+        "operationId": "AstroController_matching",
+        "summary": "Kundli matching: Ashtakoot guna milan (out of 36) with Mangal dosha for both",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatchingRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Astrology tools"
+        ]
+      }
+    },
+    "/api/v1/astro/mangal-dosha": {
+      "post": {
+        "operationId": "AstroController_mangal",
+        "summary": "Mangal (Manglik) dosha check",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BirthInputDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Astrology tools"
+        ]
+      }
+    },
+    "/api/v1/astro/panchang": {
+      "get": {
+        "operationId": "AstroController_panchang",
+        "summary": "Panchang for a date and place (defaults: today, New Delhi): tithi, nakshatra, yoga, karana, choghadiya, rahu kaal",
+        "parameters": [
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Defaults to today in the place time zone",
+            "schema": {
+              "example": "2026-10-24",
+              "type": "string"
+            }
+          },
+          {
+            "name": "placeId",
+            "required": false,
+            "in": "query",
+            "description": "Place id; defaults to New Delhi",
+            "schema": {
+              "example": "1273294",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Astrology tools"
+        ]
+      }
+    },
+    "/api/v1/horoscope/signs": {
+      "get": {
+        "operationId": "HoroscopeController_signs",
+        "summary": "The 12 signs with English/Hindi names and dates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Horoscope"
+        ]
+      }
+    },
+    "/api/v1/horoscope": {
+      "get": {
+        "operationId": "HoroscopeController_all",
+        "summary": "Horoscope for all 12 signs (daily, weekly or monthly; English or Hindi)",
+        "parameters": [
+          {
+            "name": "period",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "daily",
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "en",
+              "enum": [
+                "en",
+                "hi"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Any date inside the period; defaults to today (India time)",
+            "schema": {
+              "example": "2026-10-24",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Horoscope"
+        ]
+      }
+    },
+    "/api/v1/horoscope/{sign}": {
+      "get": {
+        "operationId": "HoroscopeController_one",
+        "summary": "Horoscope for one sign. Accepts English slug (aries) or rashi (mesh).",
+        "parameters": [
+          {
+            "name": "sign",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "period",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "daily",
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "en",
+              "enum": [
+                "en",
+                "hi"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Any date inside the period; defaults to today (India time)",
+            "schema": {
+              "example": "2026-10-24",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Horoscope"
+        ]
+      }
+    },
+    "/api/v1/admin/horoscope": {
+      "get": {
+        "operationId": "AdminHoroscopeController_list",
+        "summary": "Editor: all 12 signs for a period and language, including drafts",
+        "parameters": [
+          {
+            "name": "period",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "daily",
+              "enum": [
+                "daily",
+                "weekly",
+                "monthly"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "lang",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "en",
+              "enum": [
+                "en",
+                "hi"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "description": "Any date inside the period; defaults to today (India time)",
+            "schema": {
+              "example": "2026-10-24",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "put": {
+        "operationId": "AdminHoroscopeController_upsert",
+        "summary": "Editor: create or update one horoscope text",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertHoroscopeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/shop/products": {
+      "get": {
+        "operationId": "ShopController_list",
+        "summary": "Poojas and courses (public). Filter by type and category.",
+        "parameters": [
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "pooja",
+                "course"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "graha-shanti",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Shop"
+        ]
+      }
+    },
+    "/api/v1/shop/products/{slug}": {
+      "get": {
+        "operationId": "ShopController_get",
+        "summary": "One product. Course videos are hidden unless the lesson is a free preview.",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Shop"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/shop/orders": {
+      "post": {
+        "operationId": "ShopController_buy",
+        "summary": "Book a pooja or buy a course, paid from the wallet",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateShopOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Shop"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "get": {
+        "operationId": "ShopController_myOrders",
+        "summary": "My orders, newest first",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Shop"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/shop/orders/{id}": {
+      "get": {
+        "operationId": "ShopController_myOrder",
+        "summary": "One of my orders (pooja status, recording link)",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Shop"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/shop/my-courses": {
+      "get": {
+        "operationId": "ShopController_myCourses",
+        "summary": "Courses I have bought, with progress",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Shop"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/shop/courses/{slug}/learn": {
+      "get": {
+        "operationId": "ShopController_learn",
+        "summary": "Course player data (lessons with video links) for enrolled users",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Shop"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/shop/courses/{slug}/progress": {
+      "post": {
+        "operationId": "ShopController_progress",
+        "summary": "Mark a lesson complete or not complete",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonProgressDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Shop"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/shop/products": {
+      "get": {
+        "operationId": "AdminShopController_list",
+        "summary": "All products including drafts",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      },
+      "post": {
+        "operationId": "AdminShopController_create",
+        "summary": "Create a pooja or course",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/shop/products/{id}": {
+      "put": {
+        "operationId": "AdminShopController_update",
+        "summary": "Update a pooja or course",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertProductDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders": {
+      "get": {
+        "operationId": "AdminShopController_orders",
+        "summary": "Orders, filterable by type, status and pooja status",
+        "parameters": [
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "pooja",
+                "course"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "paid",
+                "cancelled",
+                "refunded"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "poojaStatus",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "scheduled",
+                "performed"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/{id}/pooja": {
+      "patch": {
+        "operationId": "AdminShopController_updatePooja",
+        "summary": "Schedule a pooja, mark it performed, add the recording link",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePoojaOrderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/shop/orders/{id}/refund": {
+      "post": {
+        "operationId": "AdminShopController_refund",
+        "summary": "Refund an order to the user wallet",
+        "parameters": [],
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/newsletter/subscribe": {
+      "post": {
+        "operationId": "NewsletterController_subscribe",
+        "summary": "Subscribe an email to the daily horoscope / muhurat newsletter (public)",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubscribeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Newsletter"
+        ]
+      }
+    },
+    "/api/v1/gifts": {
+      "get": {
+        "operationId": "GiftsController_catalogue",
+        "summary": "Gift catalogue (same as gifts in /config/master)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Gifts"
+        ]
+      }
+    },
+    "/api/v1/astrologers/{id}/gifts": {
+      "post": {
+        "operationId": "GiftsController_send",
+        "summary": "Send a gift to an astrologer, paid from the wallet",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendGiftDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Gifts"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/overview": {
+      "get": {
+        "operationId": "AdminController_overview",
+        "summary": "Dashboard numbers: users, astrologers, revenue (all time and today, IST) and a 14-day daily series",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/users": {
+      "get": {
+        "operationId": "AdminController_users",
+        "summary": "Users, searchable by name, phone or email",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Name, phone or email",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "role",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "user",
+                "astrologer",
+                "admin",
+                "editor"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "active",
+                "blocked"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}": {
+      "patch": {
+        "operationId": "AdminController_updateUser",
+        "summary": "Block / unblock a user or set staff roles (admin, editor)",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/users/{id}/wallet": {
+      "post": {
+        "operationId": "AdminController_adjustWallet",
+        "summary": "Credit (positive) or debit (negative) a user wallet with a note. Written to the ledger as an adjustment.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WalletAdjustDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/astrologers": {
+      "get": {
+        "operationId": "AdminController_astrologers",
+        "summary": "All astrologer profiles with commission, badges and stats",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "pending",
+                "approved",
+                "rejected",
+                "suspended"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/astrologers/{id}": {
+      "patch": {
+        "operationId": "AdminController_updateAstrologer",
+        "summary": "Suspend / reinstate, set commission, badges and listing weight",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateAstrologerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/consultations": {
+      "get": {
+        "operationId": "AdminController_consultations",
+        "summary": "All consultations, newest first",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "requested",
+                "active",
+                "completed",
+                "rejected",
+                "missed",
+                "cancelled"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/payments": {
+      "get": {
+        "operationId": "AdminController_payments",
+        "summary": "Wallet recharge payments",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "created",
+                "paid",
+                "failed",
+                "cancelled"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/transactions": {
+      "get": {
+        "operationId": "AdminController_transactions",
+        "summary": "Wallet ledger across users, or for one user",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "userId",
+            "required": false,
+            "in": "query",
+            "description": "Only this user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/bookings": {
+      "get": {
+        "operationId": "AdminController_bookings",
+        "summary": "Scheduled session bookings",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "confirmed",
+                "started",
+                "completed",
+                "cancelled",
+                "expired"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/reviews": {
+      "get": {
+        "operationId": "AdminController_reviews",
+        "summary": "Reviews for moderation",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "filter",
+            "required": false,
+            "in": "query",
+            "description": "low = 1 or 2 stars",
+            "schema": {
+              "enum": [
+                "all",
+                "hidden",
+                "low"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/reviews/{consultationId}": {
+      "patch": {
+        "operationId": "AdminController_hideReview",
+        "summary": "Hide or restore a review. Hidden reviews leave the public list and the rating.",
+        "parameters": [
+          {
+            "name": "consultationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HideReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    },
+    "/api/v1/admin/subscribers": {
+      "get": {
+        "operationId": "AdminController_subscribers",
+        "summary": "Newsletter subscribers",
+        "parameters": [
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "description": "Missing or invalid token"
+          }
+        },
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "user": []
+          }
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "AstroSparkles API",
+    "description": "REST API shared by the website and the mobile apps. All responses are { success: true, data } or { success: false, error: { code, message } }.",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "http://localhost:4000",
+      "description": "Local"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "user": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "NumerologyDto": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1992-08-15"
+          },
+          "fullName": {
+            "type": "string",
+            "example": "Ravi Kumar Sharma"
+          }
+        },
+        "required": [
+          "dateOfBirth"
+        ]
+      },
+      "LoShuDto": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1992-08-15"
+          }
+        },
+        "required": [
+          "dateOfBirth"
+        ]
+      },
+      "LoveDto": {
+        "type": "object",
+        "properties": {
+          "yourName": {
+            "type": "string",
+            "example": "Ravi"
+          },
+          "partnerName": {
+            "type": "string",
+            "example": "Priya"
+          }
+        },
+        "required": [
+          "yourName",
+          "partnerName"
+        ]
+      },
+      "BirthDetailsDto": {
+        "type": "object",
+        "properties": {
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1992-08-15"
+          },
+          "timeOfBirth": {
+            "type": "string",
+            "example": "06:45"
+          },
+          "place": {
+            "type": "string",
+            "example": "Indore, Madhya Pradesh, India"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 22.7196
+          },
+          "longitude": {
+            "type": "number",
+            "example": 75.8577
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Kolkata"
+          }
+        }
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Ravi Sharma"
+          },
+          "email": {
+            "type": "string",
+            "example": "ravi@example.com"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "en",
+              "hi"
+            ]
+          },
+          "birth": {
+            "$ref": "#/components/schemas/BirthDetailsDto"
+          }
+        }
+      },
+      "SendOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "9876543210",
+            "description": "Indian mobile number"
+          }
+        },
+        "required": [
+          "phone"
+        ]
+      },
+      "VerifyOtpDto": {
+        "type": "object",
+        "properties": {
+          "phone": {
+            "type": "string",
+            "example": "9876543210",
+            "description": "Indian mobile number"
+          },
+          "code": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "required": [
+          "phone",
+          "code"
+        ]
+      },
+      "GoogleLoginDto": {
+        "type": "object",
+        "properties": {
+          "idToken": {
+            "type": "string",
+            "description": "ID token from Google Sign-In on web, Android or iOS"
+          }
+        },
+        "required": [
+          "idToken"
+        ]
+      },
+      "RatesDto": {
+        "type": "object",
+        "properties": {
+          "chat": {
+            "type": "number",
+            "example": 20
+          },
+          "call": {
+            "type": "number",
+            "example": 20
+          },
+          "video": {
+            "type": "number",
+            "example": 30
+          }
+        },
+        "required": [
+          "chat",
+          "call"
+        ]
+      },
+      "ApplyAstrologerDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "example": "Acharya Mohan Tiwari"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "bioEn": {
+            "type": "string",
+            "example": "I have practised Vedic astrology for 12 years..."
+          },
+          "bioHi": {
+            "type": "string"
+          },
+          "expertise": {
+            "example": [
+              "vedic-astrology",
+              "numerology"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "concerns": {
+            "example": [
+              "marriage",
+              "career"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "languages": {
+            "example": [
+              "hi",
+              "en"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "experienceYears": {
+            "type": "number",
+            "example": 12
+          },
+          "qualifications": {
+            "example": [
+              "Jyotish Acharya"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rates": {
+            "$ref": "#/components/schemas/RatesDto"
+          }
+        },
+        "required": [
+          "displayName",
+          "gender",
+          "bioEn",
+          "expertise",
+          "concerns",
+          "languages",
+          "experienceYears",
+          "rates"
+        ]
+      },
+      "SetPresenceDto": {
+        "type": "object",
+        "properties": {
+          "presence": {
+            "type": "string",
+            "enum": [
+              "online",
+              "offline"
+            ]
+          }
+        },
+        "required": [
+          "presence"
+        ]
+      },
+      "ReviewApplicationDto": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string",
+            "enum": [
+              "approve",
+              "reject"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "commissionPercent": {
+            "type": "number",
+            "example": 50
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "CreateRechargeOrderDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 500,
+            "description": "Recharge amount in rupees (GST is added on top)"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "VerifyPaymentDto": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "example": "order_PQ1x2y3z"
+          },
+          "paymentId": {
+            "type": "string",
+            "example": "pay_PQ1x2y3z"
+          },
+          "signature": {
+            "type": "string",
+            "description": "razorpay_signature from Checkout. In mock mode send \"mock\"."
+          }
+        },
+        "required": [
+          "orderId",
+          "paymentId",
+          "signature"
+        ]
+      },
+      "CancelPaymentDto": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "orderId"
+        ]
+      },
+      "RequestConsultationDto": {
+        "type": "object",
+        "properties": {
+          "astrologerId": {
+            "type": "string",
+            "description": "Astrologer id (from the listing)"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "chat",
+              "call",
+              "video"
+            ],
+            "example": "chat"
+          },
+          "topic": {
+            "type": "string",
+            "example": "Will I get a government job this year?",
+            "description": "Optional first question"
+          }
+        },
+        "required": [
+          "astrologerId",
+          "mode"
+        ]
+      },
+      "EndConsultationDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "example": "user_ended"
+          }
+        }
+      },
+      "SendMessageDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "Namaste, my date of birth is 15 Aug 1992."
+          },
+          "clientId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "ReviewDto": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5,
+            "example": 5
+          },
+          "comment": {
+            "type": "string",
+            "example": "Very clear guidance"
+          }
+        },
+        "required": [
+          "rating"
+        ]
+      },
+      "ReviewReplyDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "example": "Thank you, wishing you the best!"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "ScheduleDayDto": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 6,
+            "example": 1,
+            "description": "0 = Sunday … 6 = Saturday"
+          },
+          "start": {
+            "type": "string",
+            "example": "10:00",
+            "description": "Local start time (HH:mm, 24h)"
+          },
+          "end": {
+            "type": "string",
+            "example": "13:00",
+            "description": "Local end time (HH:mm, 24h). Must be after start."
+          }
+        },
+        "required": [
+          "day",
+          "start",
+          "end"
+        ]
+      },
+      "UpdateScheduleDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "example": true,
+            "description": "Accept scheduled (pre-booked) sessions"
+          },
+          "slotMinutes": {
+            "type": "number",
+            "enum": [
+              15,
+              30,
+              45,
+              60
+            ],
+            "example": 30
+          },
+          "days": {
+            "description": "Weekly hours. Several windows per day are allowed.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleDayDto"
+            }
+          }
+        },
+        "required": [
+          "enabled",
+          "slotMinutes",
+          "days"
+        ]
+      },
+      "CreateBookingDto": {
+        "type": "object",
+        "properties": {
+          "astrologerId": {
+            "type": "string",
+            "description": "Astrologer id"
+          },
+          "start": {
+            "type": "string",
+            "example": "2026-10-26T04:30:00.000Z",
+            "description": "Slot start exactly as returned by the slots endpoint"
+          },
+          "topic": {
+            "type": "string",
+            "example": "Career change next year?"
+          }
+        },
+        "required": [
+          "astrologerId",
+          "start"
+        ]
+      },
+      "KundliRequestDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Ravi Sharma"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1992-08-15"
+          },
+          "timeOfBirth": {
+            "type": "string",
+            "example": "06:45"
+          },
+          "placeId": {
+            "type": "string",
+            "example": "1269743",
+            "description": "Place id from /places/search"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 22.7196
+          },
+          "longitude": {
+            "type": "number",
+            "example": 75.8577
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Kolkata"
+          },
+          "placeName": {
+            "type": "string",
+            "example": "Indore, India"
+          },
+          "chartStyle": {
+            "type": "string",
+            "enum": [
+              "north",
+              "south"
+            ],
+            "default": "north",
+            "description": "Chart style used in the PDF"
+          }
+        },
+        "required": [
+          "dateOfBirth",
+          "timeOfBirth"
+        ]
+      },
+      "BirthInputDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Ravi Sharma"
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female",
+              "other"
+            ]
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1992-08-15"
+          },
+          "timeOfBirth": {
+            "type": "string",
+            "example": "06:45"
+          },
+          "placeId": {
+            "type": "string",
+            "example": "1269743",
+            "description": "Place id from /places/search"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 22.7196
+          },
+          "longitude": {
+            "type": "number",
+            "example": 75.8577
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Kolkata"
+          },
+          "placeName": {
+            "type": "string",
+            "example": "Indore, India"
+          }
+        },
+        "required": [
+          "dateOfBirth",
+          "timeOfBirth"
+        ]
+      },
+      "MatchingRequestDto": {
+        "type": "object",
+        "properties": {
+          "boy": {
+            "$ref": "#/components/schemas/BirthInputDto"
+          },
+          "girl": {
+            "$ref": "#/components/schemas/BirthInputDto"
+          }
+        },
+        "required": [
+          "boy",
+          "girl"
+        ]
+      },
+      "ScoresDto": {
+        "type": "object",
+        "properties": {
+          "love": {
+            "type": "number"
+          },
+          "career": {
+            "type": "number"
+          },
+          "money": {
+            "type": "number"
+          },
+          "health": {
+            "type": "number"
+          }
+        }
+      },
+      "UpsertHoroscopeDto": {
+        "type": "object",
+        "properties": {
+          "sign": {
+            "type": "string",
+            "enum": [
+              "aries",
+              "taurus",
+              "gemini",
+              "cancer",
+              "leo",
+              "virgo",
+              "libra",
+              "scorpio",
+              "sagittarius",
+              "capricorn",
+              "aquarius",
+              "pisces"
+            ]
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          },
+          "date": {
+            "type": "string",
+            "example": "2026-10-24",
+            "description": "Any date inside the period"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "en",
+              "hi"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "luckyNumber": {
+            "type": "string"
+          },
+          "luckyColor": {
+            "type": "string"
+          },
+          "mantra": {
+            "type": "string"
+          },
+          "remedy": {
+            "type": "string"
+          },
+          "scores": {
+            "$ref": "#/components/schemas/ScoresDto"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ],
+            "default": "published"
+          }
+        },
+        "required": [
+          "sign",
+          "period",
+          "date",
+          "lang",
+          "text"
+        ]
+      },
+      "PoojaDetailsDto": {
+        "type": "object",
+        "properties": {
+          "sankalpName": {
+            "type": "string",
+            "example": "Ravi Sharma",
+            "description": "Name taken in the sankalp"
+          },
+          "gotra": {
+            "type": "string",
+            "example": "Kashyap"
+          },
+          "preferredDate": {
+            "type": "string",
+            "example": "2026-11-02"
+          },
+          "wishes": {
+            "type": "string",
+            "example": "Peace and good health for the family"
+          }
+        },
+        "required": [
+          "sankalpName"
+        ]
+      },
+      "CreateShopOrderDto": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string"
+          },
+          "pooja": {
+            "description": "Required for poojas",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PoojaDetailsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "productId"
+        ]
+      },
+      "LessonProgressDto": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "lessonId",
+          "completed"
+        ]
+      },
+      "LessonDto": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "type": "number"
+          },
+          "videoUrl": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "freePreview": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
+      "UpsertProductDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "pooja",
+              "course"
+            ]
+          },
+          "slug": {
+            "type": "string",
+            "example": "navgraha-shanti-pooja"
+          },
+          "title": {
+            "type": "string"
+          },
+          "titleHi": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "category": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "mrp": {
+            "type": "number"
+          },
+          "includes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "durationMinutes": {
+            "type": "number"
+          },
+          "performedBy": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "instructor": {
+            "type": "string"
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LessonDto"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "published"
+            ]
+          },
+          "sortWeight": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "type",
+          "slug",
+          "title",
+          "summary",
+          "price"
+        ]
+      },
+      "UpdatePoojaOrderDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "scheduled",
+              "performed"
+            ]
+          },
+          "scheduledAt": {
+            "type": "string",
+            "example": "2026-11-02T07:00:00+05:30"
+          },
+          "recordingUrl": {
+            "type": "string"
+          },
+          "noteToUser": {
+            "type": "string"
+          }
+        }
+      },
+      "SubscribeDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "you@example.com"
+          },
+          "lang": {
+            "type": "string",
+            "enum": [
+              "en",
+              "hi"
+            ]
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "SendGiftDto": {
+        "type": "object",
+        "properties": {
+          "gift": {
+            "type": "string",
+            "example": "rose",
+            "description": "Gift slug from GET /config/master (gifts)"
+          }
+        },
+        "required": [
+          "gift"
+        ]
+      },
+      "AdminUpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "blocked"
+            ]
+          },
+          "staffRoles": {
+            "description": "Staff roles to grant. Replaces the current staff roles (user and astrologer roles are kept).",
+            "example": [
+              "editor"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "WalletAdjustDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 50,
+            "description": "Rupees. Positive credits the wallet, negative debits it."
+          },
+          "note": {
+            "type": "string",
+            "example": "Goodwill credit for a dropped chat"
+          }
+        },
+        "required": [
+          "amount",
+          "note"
+        ]
+      },
+      "AdminUpdateAstrologerDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "approved",
+              "suspended"
+            ]
+          },
+          "commissionPercent": {
+            "type": "number",
+            "example": 40
+          },
+          "badges": {
+            "example": [
+              "top-rated"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sortWeight": {
+            "type": "number",
+            "example": 150,
+            "description": "Higher shows earlier in \"recommended\" sort"
+          }
+        }
+      },
+      "HideReviewDto": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "hidden"
+        ]
+      }
+    }
+  }
+}

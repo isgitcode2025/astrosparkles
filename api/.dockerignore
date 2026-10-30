@@ -1,0 +1,11 @@
+# Keeps the host's node_modules (built for Windows) out of the Linux image,
+# and keeps the build context small.
+node_modules
+dist
+.env
+.env.*
+!.env.example
+*.log
+test
+coverage
+.git

@@ -1,0 +1,499 @@
+{
+ "planets": {
+  "Ascendant": {
+   "current_sign": 3,
+   "fullDegree": 60.5896,
+   "normDegree": 0.5895999999999972,
+   "isRetro": "false",
+   "house_number": 1,
+   "localized_name": "Ascendant",
+   "zodiac_sign_name": "Gemini",
+   "zodiac_sign_lord": "Mercury",
+   "nakshatra_name": "Mrigashira",
+   "nakshatra_pada": 3,
+   "nakshatra_vimsottari_lord": "Mars"
+  },
+  "Sun": {
+   "current_sign": 8,
+   "fullDegree": 233.2004,
+   "normDegree": 23.200400000000002,
+   "isRetro": "false",
+   "house_number": 6,
+   "localized_name": "Sun",
+   "zodiac_sign_name": "Scorpio",
+   "zodiac_sign_lord": "Mars",
+   "nakshatra_name": "Jyeshtha",
+   "nakshatra_pada": 2,
+   "nakshatra_vimsottari_lord": "Mercury"
+  },
+  "Moon": {
+   "current_sign": 4,
+   "fullDegree": 100.8338,
+   "normDegree": 10.833799999999997,
+   "isRetro": "false",
+   "house_number": 2,
+   "localized_name": "Moon",
+   "zodiac_sign_name": "Cancer",
+   "zodiac_sign_lord": "Moon",
+   "nakshatra_name": "Pushya",
+   "nakshatra_pada": 3,
+   "nakshatra_vimsottari_lord": "Saturn"
+  },
+  "Mars": {
+   "current_sign": 7,
+   "fullDegree": 196.3926,
+   "normDegree": 16.392599999999987,
+   "isRetro": "false",
+   "house_number": 5,
+   "localized_name": "Mars",
+   "zodiac_sign_name": "Libra",
+   "zodiac_sign_lord": "Venus",
+   "nakshatra_name": "Swati",
+   "nakshatra_pada": 3,
+   "nakshatra_vimsottari_lord": "Rahu"
+  },
+  "Mercury": {
+   "current_sign": 8,
+   "fullDegree": 225.5837,
+   "normDegree": 15.583699999999993,
+   "isRetro": "false",
+   "house_number": 6,
+   "localized_name": "Mercury",
+   "zodiac_sign_name": "Scorpio",
+   "zodiac_sign_lord": "Mars",
+   "nakshatra_name": "Anuradha",
+   "nakshatra_pada": 4,
+   "nakshatra_vimsottari_lord": "Saturn"
+  },
+  "Jupiter": {
+   "current_sign": 12,
+   "fullDegree": 356.138,
+   "normDegree": 26.137999999999977,
+   "isRetro": "true",
+   "house_number": 10,
+   "localized_name": "Jupiter",
+   "zodiac_sign_name": "Pisces",
+   "zodiac_sign_lord": "Jupiter",
+   "nakshatra_name": "Revati",
+   "nakshatra_pada": 3,
+   "nakshatra_vimsottari_lord": "Mercury"
+  },
+  "Venus": {
+   "current_sign": 9,
+   "fullDegree": 260.5217,
+   "normDegree": 20.52170000000001,
+   "isRetro": "false",
+   "house_number": 7,
+   "localized_name": "Venus",
+   "zodiac_sign_name": "Sagittarius",
+   "zodiac_sign_lord": "Jupiter",
+   "nakshatra_name": "Purva Ashadha",
+   "nakshatra_pada": 3,
+   "nakshatra_vimsottari_lord": "Venus"
+  },
+  "Saturn": {
+   "current_sign": 8,
+   "fullDegree": 239.1293,
+   "normDegree": 29.1293,
+   "isRetro": "false",
+   "house_number": 6,
+   "localized_name": "Saturn",
+   "zodiac_sign_name": "Scorpio",
+   "zodiac_sign_lord": "Mars",
+   "nakshatra_name": "Jyeshtha",
+   "nakshatra_pada": 4,
+   "nakshatra_vimsottari_lord": "Mercury"
+  },
+  "Rahu": {
+   "current_sign": 12,
+   "fullDegree": 334.669,
+   "normDegree": 4.668999999999983,
+   "isRetro": "true",
+   "house_number": 10,
+   "localized_name": "Rahu",
+   "zodiac_sign_name": "Pisces",
+   "zodiac_sign_lord": "Jupiter",
+   "nakshatra_name": "Uttara Bhadrapada",
+   "nakshatra_pada": 4,
+   "nakshatra_vimsottari_lord": "Saturn"
+  },
+  "Ketu": {
+   "current_sign": 6,
+   "fullDegree": 154.669,
+   "normDegree": 4.669000000000011,
+   "isRetro": "true",
+   "house_number": 4,
+   "localized_name": "Ketu",
+   "zodiac_sign_name": "Virgo",
+   "zodiac_sign_lord": "Mercury",
+   "nakshatra_name": "Uttara Phalguni",
+   "nakshatra_pada": 2,
+   "nakshatra_vimsottari_lord": "Sun"
+  }
+ },
+ "basic": {
+  "ascendant": {
+   "current_sign": 3,
+   "fullDegree": 60.5896,
+   "normDegree": 0.5895999999999972,
+   "isRetro": "false",
+   "house_number": 1,
+   "localized_name": "Ascendant",
+   "zodiac_sign_name": "Gemini",
+   "zodiac_sign_lord": "Mercury",
+   "nakshatra_name": "Mrigashira",
+   "nakshatra_pada": 3,
+   "nakshatra_vimsottari_lord": "Mars"
+  },
+  "planets": {
+   "Sun": {
+    "current_sign": 8,
+    "fullDegree": 233.2004,
+    "normDegree": 23.200400000000002,
+    "isRetro": "false",
+    "house_number": 6,
+    "localized_name": "Sun",
+    "zodiac_sign_name": "Scorpio",
+    "zodiac_sign_lord": "Mars",
+    "nakshatra_name": "Jyeshtha",
+    "nakshatra_pada": 2,
+    "nakshatra_vimsottari_lord": "Mercury"
+   },
+   "Moon": {
+    "current_sign": 4,
+    "fullDegree": 100.8338,
+    "normDegree": 10.833799999999997,
+    "isRetro": "false",
+    "house_number": 2,
+    "localized_name": "Moon",
+    "zodiac_sign_name": "Cancer",
+    "zodiac_sign_lord": "Moon",
+    "nakshatra_name": "Pushya",
+    "nakshatra_pada": 3,
+    "nakshatra_vimsottari_lord": "Saturn"
+   },
+   "Mars": {
+    "current_sign": 7,
+    "fullDegree": 196.3926,
+    "normDegree": 16.392599999999987,
+    "isRetro": "false",
+    "house_number": 5,
+    "localized_name": "Mars",
+    "zodiac_sign_name": "Libra",
+    "zodiac_sign_lord": "Venus",
+    "nakshatra_name": "Swati",
+    "nakshatra_pada": 3,
+    "nakshatra_vimsottari_lord": "Rahu"
+   },
+   "Mercury": {
+    "current_sign": 8,
+    "fullDegree": 225.5837,
+    "normDegree": 15.583699999999993,
+    "isRetro": "false",
+    "house_number": 6,
+    "localized_name": "Mercury",
+    "zodiac_sign_name": "Scorpio",
+    "zodiac_sign_lord": "Mars",
+    "nakshatra_name": "Anuradha",
+    "nakshatra_pada": 4,
+    "nakshatra_vimsottari_lord": "Saturn"
+   },
+   "Jupiter": {
+    "current_sign": 12,
+    "fullDegree": 356.138,
+    "normDegree": 26.137999999999977,
+    "isRetro": "true",
+    "house_number": 10,
+    "localized_name": "Jupiter",
+    "zodiac_sign_name": "Pisces",
+    "zodiac_sign_lord": "Jupiter",
+    "nakshatra_name": "Revati",
+    "nakshatra_pada": 3,
+    "nakshatra_vimsottari_lord": "Mercury"
+   },
+   "Venus": {
+    "current_sign": 9,
+    "fullDegree": 260.5217,
+    "normDegree": 20.52170000000001,
+    "isRetro": "false",
+    "house_number": 7,
+    "localized_name": "Venus",
+    "zodiac_sign_name": "Sagittarius",
+    "zodiac_sign_lord": "Jupiter",
+    "nakshatra_name": "Purva Ashadha",
+    "nakshatra_pada": 3,
+    "nakshatra_vimsottari_lord": "Venus"
+   },
+   "Saturn": {
+    "current_sign": 8,
+    "fullDegree": 239.1293,
+    "normDegree": 29.1293,
+    "isRetro": "false",
+    "house_number": 6,
+    "localized_name": "Saturn",
+    "zodiac_sign_name": "Scorpio",
+    "zodiac_sign_lord": "Mars",
+    "nakshatra_name": "Jyeshtha",
+    "nakshatra_pada": 4,
+    "nakshatra_vimsottari_lord": "Mercury"
+   },
+   "Rahu": {
+    "current_sign": 12,
+    "fullDegree": 334.669,
+    "normDegree": 4.668999999999983,
+    "isRetro": "true",
+    "house_number": 10,
+    "localized_name": "Rahu",
+    "zodiac_sign_name": "Pisces",
+    "zodiac_sign_lord": "Jupiter",
+    "nakshatra_name": "Uttara Bhadrapada",
+    "nakshatra_pada": 4,
+    "nakshatra_vimsottari_lord": "Saturn"
+   },
+   "Ketu": {
+    "current_sign": 6,
+    "fullDegree": 154.669,
+    "normDegree": 4.669000000000011,
+    "isRetro": "true",
+    "house_number": 4,
+    "localized_name": "Ketu",
+    "zodiac_sign_name": "Virgo",
+    "zodiac_sign_lord": "Mercury",
+    "nakshatra_name": "Uttara Phalguni",
+    "nakshatra_pada": 2,
+    "nakshatra_vimsottari_lord": "Sun"
+   }
+  }
+ },
+ "dasha": {
+  "year_mode": "SOLAR_365_25",
+  "balance": {
+   "lord": "Saturn",
+   "elapsed_fraction": 0.517,
+   "remaining_fraction": 0.483,
+   "balance_years": 9.1695
+  },
+  "mahadashas": [
+   {
+    "lord": "Saturn",
+    "start": "1978-02-09T03:54:59+05:30",
+    "end": "1997-02-08T21:54:59+05:30",
+    "duration_days": 6939.75
+   },
+   {
+    "lord": "Mercury",
+    "start": "1997-02-08T21:54:59+05:30",
+    "end": "2014-02-09T03:54:59+05:30",
+    "duration_days": 6209.25
+   },
+   {
+    "lord": "Ketu",
+    "start": "2014-02-09T03:54:59+05:30",
+    "end": "2021-02-08T21:54:59+05:30",
+    "duration_days": 2556.75
+   },
+   {
+    "lord": "Venus",
+    "start": "2021-02-08T21:54:59+05:30",
+    "end": "2041-02-08T21:54:59+05:30",
+    "duration_days": 7305
+   },
+   {
+    "lord": "Sun",
+    "start": "2041-02-08T21:54:59+05:30",
+    "end": "2047-02-09T09:54:59+05:30",
+    "duration_days": 2191.5
+   }
+  ]
+ },
+ "mangal": {
+  "is_present": true,
+  "triggered_references": [
+   "Moon"
+  ],
+  "checked_houses": {
+   "Lagna": 5,
+   "Moon": 4,
+   "Venus": 11
+  },
+  "rule_houses": [
+   1,
+   4,
+   7,
+   8,
+   12
+  ],
+  "severity": "not_evaluated",
+  "cancellation": "not_evaluated"
+ },
+ "ashtakoot": {
+  "bride": {
+   "sign": "Pisces",
+   "nakshatra": {
+    "name": "Uttara Bhadrapada",
+    "pada": 1
+   },
+   "varna": "Brahmin",
+   "vashya": "Jalchar",
+   "gana": "Manushya",
+   "nadi": "Madhya",
+   "yoni": "Cow"
+  },
+  "groom": {
+   "sign": "Cancer",
+   "nakshatra": {
+    "name": "Pushya",
+    "pada": 3
+   },
+   "varna": "Brahmin",
+   "vashya": "Jalchar",
+   "gana": "Deva",
+   "nadi": "Madhya",
+   "yoni": "Goat"
+  },
+  "breakdown": {
+   "varna": {
+    "name": "varna",
+    "score": 1,
+    "maximum": 1,
+    "bride_value": "Brahmin",
+    "groom_value": "Brahmin"
+   },
+   "vashya": {
+    "name": "vashya",
+    "score": 2,
+    "maximum": 2,
+    "bride_value": "Jalchar",
+    "groom_value": "Jalchar"
+   },
+   "tara": {
+    "name": "tara",
+    "score": 0,
+    "maximum": 3,
+    "bride_value": 10,
+    "groom_value": 19
+   },
+   "yoni": {
+    "name": "yoni",
+    "score": 2,
+    "maximum": 4,
+    "bride_value": "Cow",
+    "groom_value": "Goat"
+   },
+   "graha_maitri": {
+    "name": "graha_maitri",
+    "score": 4,
+    "maximum": 5,
+    "bride_value": "Jupiter",
+    "groom_value": "Moon"
+   },
+   "gana": {
+    "name": "gana",
+    "score": 5,
+    "maximum": 6,
+    "bride_value": "Manushya",
+    "groom_value": "Deva"
+   },
+   "bhakoot": {
+    "name": "bhakoot",
+    "score": 0,
+    "maximum": 7,
+    "bride_value": "Pisces",
+    "groom_value": "Cancer",
+    "has_dosha": true
+   },
+   "nadi": {
+    "name": "nadi",
+    "score": 0,
+    "maximum": 8,
+    "bride_value": "Madhya",
+    "groom_value": "Madhya",
+    "has_dosha": true
+   }
+  },
+  "total_score": 14,
+  "effective_total_score": 29,
+  "maximum_score": 36
+ },
+ "panchang": {
+  "tithi": {
+   "number": 13,
+   "name": "Trayodashi",
+   "paksha": "Shukla"
+  },
+  "nakshatra": {
+   "index": 25,
+   "name": "Uttara Bhadrapada",
+   "pada": 2,
+   "lord": "Saturn"
+  },
+  "yoga": {
+   "number": 13,
+   "name": "Vyaghata"
+  },
+  "karana": {
+   "number": 26,
+   "name": "Taitila"
+  },
+  "weekday": {
+   "index": 6,
+   "name": "Saturday",
+   "lord": "Saturn"
+  }
+ },
+ "choghadiya": {
+  "day": [
+   {
+    "name": "Kaal",
+    "slot": 1,
+    "start": "2026-10-24T01:00:49+00:00",
+    "end": "2026-10-24T02:25:48+00:00"
+   },
+   {
+    "name": "Shubh",
+    "slot": 2,
+    "start": "2026-10-24T02:25:48+00:00",
+    "end": "2026-10-24T03:50:47+00:00"
+   }
+  ],
+  "night": [
+   {
+    "name": "Labh",
+    "slot": 1,
+    "start": "2026-10-24T12:20:40+00:00",
+    "end": "2026-10-24T13:55:45+00:00"
+   }
+  ]
+ },
+ "inauspicious": {
+  "sunrise": {
+   "utc_datetime": "2026-10-24T01:00:49+00:00"
+  },
+  "sunset": {
+   "utc_datetime": "2026-10-24T12:20:40+00:00"
+  },
+  "rahu_kaal": {
+   "start": "2026-10-24T03:50:47+00:00",
+   "end": "2026-10-24T05:15:46+00:00"
+  },
+  "gulika_kaal": {
+   "start": "2026-10-24T01:00:49+00:00",
+   "end": "2026-10-24T02:25:48+00:00"
+  },
+  "yamaganda": {
+   "start": "2026-10-24T08:05:43+00:00",
+   "end": "2026-10-24T09:30:42+00:00"
+  }
+ },
+ "abhijit": {
+  "interval": {
+   "name": "Abhijit Muhurat",
+   "period": [
+    {
+     "start": "2026-10-24T06:18:05+00:00",
+     "end": "2026-10-24T07:03:24+00:00"
+    }
+   ]
+  }
+ }
+}

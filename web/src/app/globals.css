@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Defaults; layout.tsx overrides them from the white-label brand settings. */
+:root {
+  --brand-primary: #3b1f6e;
+  --brand-primary-dark: #24124a;
+  --brand-accent: #e8912d;
+  --brand-gold: #d4a93c;
+  --brand-bg: #fff9f0;
+  --brand-text: #1e1630;
+  --brand-primary-rgb: 59 31 110;
+  --brand-primary-dark-rgb: 36 18 74;
+  --brand-accent-rgb: 232 145 45;
+  --brand-accent-dark-rgb: 210 122 24;
+  --brand-gold-rgb: 212 169 60;
+  --brand-gold-light-rgb: 245 231 200;
+  --brand-bg-rgb: 255 249 240;
+  --brand-text-rgb: 30 22 48;
+  --brand-border-rgb: 240 229 216;
+  /* font stacks (files come from @fontsource, imported in layout.tsx) */
+  --font-heading: "Poppins";
+  --font-body: "Mukta";
+  --font-display: "Bodoni Moda";
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--brand-accent);
+  color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), var(--font-body), system-ui, sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-brand-accent px-6 py-3 font-heading text-sm font-bold text-white shadow-sm transition hover:bg-brand-accent-dark hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-brand-primary px-5 py-2.5 font-heading text-sm font-bold text-brand-primary transition hover:bg-brand-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .card {
+    @apply rounded-2xl border border-brand-border bg-white p-5 shadow-soft sm:p-6;
+  }
+  .field {
+    @apply mt-1 w-full rounded-xl border border-brand-border bg-white px-3.5 py-2.5 text-sm font-normal text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20;
+  }
+  .label {
+    @apply block text-sm font-semibold text-brand-primary;
+  }
+  .pill {
+    @apply rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors;
+  }
+  .pill-on {
+    @apply border-brand-primary bg-brand-primary text-white;
+  }
+  .pill-off {
+    @apply border-brand-border bg-white text-slate-600 hover:border-brand-accent hover:text-brand-accent;
+  }
+  .container-site {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-widest text-brand-accent;
+  }
+}
+
+@layer utilities {
+  .mandala-bg {
+    background-image: radial-gradient(circle at center, rgb(var(--brand-gold-rgb) / 0.12) 0%, transparent 70%);
+  }
+  .tarot-card {
+    perspective: 1000px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .tarot-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 14px 28px rgb(var(--brand-primary-rgb) / 0.18);
+  }
+  .bg-mandala {
+    background-image: radial-gradient(rgb(var(--brand-gold-rgb)) 0.75px, transparent 0.75px),
+      radial-gradient(rgb(var(--brand-primary-rgb)) 0.75px, transparent 0.75px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+  }
+  .pulse-online {
+    box-shadow: 0 0 0 0 rgb(22 163 74 / 0.7);
+    animation: pulse-green 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+  }
+  @keyframes pulse-green {
+    to {
+      box-shadow: 0 0 0 8px rgb(22 163 74 / 0);
+    }
+  }
+  .thin-scrollbar::-webkit-scrollbar {
+    height: 4px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--brand-border-rgb));
+    border-radius: 9999px;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------- loading states ---------- */
+@layer utilities {
+  /* Shimmer placeholder: cream base with a soft gold sweep. */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(var(--brand-border-rgb) / 0.55);
+  }
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.65), rgb(var(--brand-gold-rgb) / 0.12), transparent);
+    animation: shimmer-sweep 1.4s ease-in-out infinite;
+  }
+  .shimmer-dark {
+    background-color: rgb(255 255 255 / 0.12);
+  }
+  .shimmer-dark::after {
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.18), transparent);
+  }
+  @keyframes shimmer-sweep {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+  /* Top route progress bar */
+  .route-progress {
+    background: linear-gradient(90deg, rgb(var(--brand-gold-rgb)), rgb(var(--brand-accent-rgb)));
+    box-shadow: 0 0 8px rgb(var(--brand-accent-rgb) / 0.6);
+    transition: width 0.25s ease, opacity 0.3s ease;
+  }
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .toast-in {
+    animation: toast-in 0.2s ease-out;
+  }
+}
+
+/* Respect the "reduce motion" setting: no sweeping, spinning or sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .shimmer::after,
+  .toast-in {
+    animation: none;
+  }
+  .animate-spin {
+    animation-duration: 3s;
+  }
+  .route-progress {
+    transition: none;
+  }
+}
+
+/* ---------- Figma home design pieces ---------- */
+@layer components {
+  .fig-astro-card {
+    background: #fff;
+    box-shadow: 0 4px 37.4px rgb(0 0 0 / 0.05);
+    border-bottom: 1px solid transparent;
+    transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  /* the second card is shown raised, as in the design; hovering any card raises that one instead */
+  .fig-astro-card.is-featured,
+  .fig-astro-card:hover {
+    background: #fff8ef;
+    border-bottom-color: rgb(var(--brand-accent-rgb));
+    box-shadow: 0 0 33px rgb(var(--brand-accent-rgb) / 0.14);
+  }
+  .fig-astro-grid:hover .fig-astro-card.is-featured:not(:hover) {
+    background: #fff;
+    border-bottom-color: transparent;
+    box-shadow: 0 4px 37.4px rgb(0 0 0 / 0.05);
+  }
+  @media (min-width: 1024px) {
+    .fig-astro-card.is-featured,
+    .fig-astro-card:hover {
+      transform: translateY(-24px);
+    }
+    .fig-astro-grid:hover .fig-astro-card.is-featured:not(:hover) {
+      transform: none;
+    }
+  }
+  /* zodiac card: white body with a round notch under the sign circle */
+  .fig-zod-body {
+    -webkit-mask: radial-gradient(circle 48px at 50% 0, transparent 47.5px, #000 48px);
+    mask: radial-gradient(circle 48px at 50% 0, transparent 47.5px, #000 48px);
+  }
+  .fig-zod-shadow {
+    filter: drop-shadow(0 4px 14px rgb(0 0 0 / 0.04));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fig-astro-card {
+    transition: none;
+  }
+}
+/* the display serif runs a little wider than the design face, so tighten it slightly */
+.font-display {
+  letter-spacing: -0.01em;
+}
