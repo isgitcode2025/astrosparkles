@@ -1,11 +1,6 @@
 name: CI/CD
 
-# Pushing to dev: build+lint both apps, then (only if that passes) deploy to
-# the VPS. Pull requests and pushes to any other branch only run the checks.
-#
-# This workflow NEVER touches api/.env or anything else on the server beyond
-# the app code itself — secrets are created and edited by hand on the VPS,
-# not by CI/CD.
+
 on:
   push:
     branches: [dev]
@@ -37,10 +32,6 @@ jobs:
 
       - run: npm ci
       - run: npm run build
-      # api/ci:lint is not run here yet: the codebase has pre-existing
-      # formatting/lint debt (from before this pipeline existed) that needs
-      # a one-time `npm run lint` + commit before it can gate CI. Until then,
-      # the build (real type-check) is the gate.
 
   web:
     name: Web · lint, build
@@ -49,8 +40,7 @@ jobs:
       run:
         working-directory: web
     env:
-      # Build-time only, used by web's Next.js build. Harmless placeholder —
-      # the real value is already baked into the image running on the VPS.
+      
       NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
     steps:
       - uses: actions/checkout@v4
